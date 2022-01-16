@@ -4,6 +4,8 @@ library(Matrix)
 
 source("Classic_Lasso_SSNAL.R")
 source("Classic_Lasso_SSNAL_main.R")
+source("Classic_Lasso_SSNCG.R")
+source("proj_inf.R")
 
 eps <- 2.220446e-16 # Copy the MATLAB eps essentially
 

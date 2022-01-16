@@ -23,17 +23,34 @@ sig = par.sigma;
 bscale = options.bscale;
 cscale = options.cscale;
 normborg = 1+norm(b)*sqrt(bscale*cscale);
+
+%fprintf('\n  normborg = %3.7f',normborg); %DBGGG
+%input("Stop") %DBG
+
 %% preperation
 Amap = @(x) Ainput.Amap(x);
 ATmap = @(x) Ainput.ATmap(x);
 yinput = -Atxi0 - x0/sig;
+
+%fprintf('\n  ld = %3.7f',ld); %DBGGG
+%input("Stop") %DBG
+
 [y,rr] = proj_inf(yinput,ld);
 par.rr = rr;
+
+%fprintf('\n  y = %3.7f',mean(y)); %DBGGG
+%fprintf('\n  rr = %3.7f',mean(rr)); %DBGGG
+%input("Stop") %DBG
+
 Rpb = Ax0 - b + xi0;
 normRp = norm(Rpb);
 ytmp = yinput - y;
 Atxi = Atxi0; xi = xi0;
 Ly = b'*xi - 0.5*norm(xi)^2 - 0.5*sig*norm(ytmp)^2;
+
+%fprintf('\n  Ly = %3.7f',Ly); %DBGGG
+%input("Stop") %DBG
+
 runhist.psqmr(1) = 0;
 runhist.findstep(1) = 0;
 cnt_Amap = 0;

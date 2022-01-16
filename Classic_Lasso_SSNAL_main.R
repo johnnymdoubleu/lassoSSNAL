@@ -28,6 +28,7 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
   obj1 <- 0.5 * norm(Ax - borg, "2")^2 + lambdaorg*norm(x) + orgojbconst
   obj2 <- -(0.5*(norm(xi,"2")^2)+t(borg) %*% xi) + orgojbconst
   
+  #return(rescale)
   #return(c(obj1,obj2))
   #return(scale)
   bscale <- 1
@@ -83,23 +84,23 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
   runhist <- list(dualfeasorg1 = dualfeasorg,
                   primfeasorg1 = primfeasorg)
   
-  return(c(primfeas,dualfeas,primfeasorg,
-           dualfeasorg,
-            maxfeas,maxfeasorg,relgap))
+  #return(c(primfeas,dualfeas,primfeasorg,
+  #         dualfeasorg,
+  #          maxfeas,maxfeasorg,relgap))
   
-  if (printyes) {
-    printf('\n \t\t   Classic Lasso: SSNAL      ')
-    printf('\n n = %3.0d, m = %3.0d',n, m)
-    printf('\n bscale = %3.2d, cscale = %3.2d', bscale, cscale)
-    printf('\n ---------------------------------------------------')
-    printf('\n  iter|  [pinfeas  dinfeas]  [pinforg  dinforg]    relgaporg|    pobj          dobj    |')
-    printf(' time | sigma |rankS |')
-    printf('\n*****************************************************')
-    printf('**************************************************************')
-    printf('\n #%3.1d|  %3.2d %3.2d %3.2d %3.2d %- 3.2d %- 8.7d %- 8.7d  %5.1d', 0,primfeas,dualfeas,primfeasorg,dualfeasorg,relgap,obj1,obj2,
-           toc())#etime(clock,tstart)); 
-    printf('  %3.2d ',sigma)
-  }
+  #if (printyes) {
+  #  printf('\n \t\t   Classic Lasso: SSNAL      ')
+  #  printf('\n n = %3.0d, m = %3.0d',n, m)
+  #  printf('\n bscale = %3.2d, cscale = %3.2d', bscale, cscale)
+  #  printf('\n ---------------------------------------------------')
+  #  printf('\n  iter|  [pinfeas  dinfeas]  [pinforg  dinforg]    relgaporg|    pobj          dobj    |')
+  #  printf(' time | sigma |rankS |')
+  #  printf('\n*****************************************************')
+  #  printf('**************************************************************')
+  #  printf('\n #%3.1d|  %3.2d %3.2d %3.2d %3.2d %- 3.2d %- 8.7d %- 8.7d  %5.1d', 0,primfeas,dualfeas,primfeasorg,dualfeasorg,relgap,obj1,obj2,
+  #         toc())#etime(clock,tstart)); 
+  #  printf('  %3.2d ',sigma)
+  #}
   
   #SSNCG
   
@@ -120,7 +121,10 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
                   cscale = cscale,
                   printsub = printyes
   )
-  if (Ascaleyes){ssncgop <- c(ssncgop, Ascaleyes=1, dscale = dscale)}
+  if (Ascaleyes) {
+    ssncgop <- c(ssncgop, Ascaleyes=1)
+    ssncgop$dscale = dscale
+  }
   else {ssncgop <- c(ssncgop, Ascaleyes = 0)}
   
   sigmamax <- 1e7
@@ -129,12 +133,23 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
     sigmamax <- sigmamax * mean(dscale)
   }
   
+  # ADDED THESE LINES IN TO COMPLY WITH R NEED
+  # FOR VARIABLES TO ACTUALLY EXIST BEFORE IF
+  # STATEMENTS
+  # NORMALLY COMPUTED IN THE COURSE OF THE FUNCTION
+  # LATER FOR ITERATIONS mod3==1
+  normy <- norm(y, "2")
+  normAtxi <- norm(Atxi, "2")
+  normx <- norm(x,"2")
+  normyxi <- max(normx, normAtxi)
+  
   for (iter in c(1:maxiter)) {
-    if ((rescale==1 & maxfeas < 5e2 & iter%%3 ==1 & iter > 1)|(!exists(A) & rescale >= 2 & maxteas < 1e-1 & abs(relgap)<0.05 & iter >= 5 & max(normx/normyxi, normyxi/normx) > 1.7 & iter%%5 ==1)){
+    if ((rescale==1 & maxfeas < 5e2 & iter%%3 ==1 & iter > 1)|(!is.null(A) & rescale >= 2 & maxfeas < 1e-1 & abs(relgap)<0.05 & iter >= 5 & max(normx/normyxi, normyxi/normx) > 1.7 & iter%%5 ==1)){
       normy <- norm(y, "2")
       normAtxi <- norm(Atxi, "2")
-      normx <- norm(x)
+      normx <- norm(x,"2")
       normyxi <- max(normx, normAtxi)
+      #return(c(sigma, normx, normyxi, bscale, cscale))
       c(sigma, bscale2, cscale2, sbc, sboc, bscale, cscale) <- mexscale(sigma, normx, normyxi, bscale, cscale)
       
       Amap <- function(x) Amap(x*sboc)
@@ -159,13 +174,23 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
       prim_win <- 0
       dual_win <- 0
     }
+    #return("Got here")
     xold <- x
     parNCG$sigma <- sigma
     if (dualfeas < 1e-5){maxitersub <- max(maxitersub, 30)}
     else if(dualfeas > 1e-3){maxitersub <- max(maxitersub, 30)}
     else if(dualfeas > 1e-1){maxitersub <- max(maxitersub, 20)}
     ssncgop <- c(ssncgop, maxitersub = maxitersub)
-    c(y,Atxi, xi, parNCG, runhist_NCG, info_NCG) <- classic_lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
+    
+    #return(c(n,mean(b),mean(x),
+    #         mean(Ax),mean(Atxi),mean(xi),mean(ld)))
+    
+    #return(ssncgop)
+    
+    #c(y,Atxi, xi, parNCG, runhist_NCG, info_NCG) <- classic_Lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
+    
+    return(Classic_Lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop))
+    
     if (info_ncg$breakyes < 0){
       parNCG$tolconst <- max(parNCG$tolconst/1.06, 1e-3)
     }
@@ -233,8 +258,8 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
     }
     if (iter %% 3 == 1){
       normx <- norm(x,"2")
-      normAtxi <- norm(Atxi)
-      normy <- norm(y)
+      normAtxi <- norm(Atxi,"2")
+      normy <- norm(y,"2")
       if (printyes) {
         printf('\n        [normx,Atxi,y =%3.2e %3.2e %3.2e]',normx,normAtxi,normy)
       }
