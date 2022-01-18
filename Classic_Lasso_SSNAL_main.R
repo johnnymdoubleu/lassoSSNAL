@@ -84,9 +84,9 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
   runhist <- list(dualfeasorg1 = dualfeasorg,
                   primfeasorg1 = primfeasorg)
   
-  #return(c(primfeas,dualfeas,primfeasorg,
-  #         dualfeasorg,
-  #          maxfeas,maxfeasorg,relgap))
+  return(c(primfeas,dualfeas,primfeasorg,
+          dualfeasorg,
+           maxfeas,maxfeasorg,relgap))
   
   #if (printyes) {
   #  printf('\n \t\t   Classic Lasso: SSNAL      ')

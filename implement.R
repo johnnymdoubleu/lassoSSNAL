@@ -1,19 +1,22 @@
+library(Matrix)
 library(R.matlab)
 library(RSpectra)
-library(Matrix)
 
-source("Classic_Lasso_SSNAL.R")
-source("Classic_Lasso_SSNAL_main.R")
-source("Classic_Lasso_SSNCG.R")
-source("proj_inf.R")
+source("lassoSSNAL/Classic_Lasso_SSNAL.R")
+source("lassoSSNAL/Classic_Lasso_SSNAL_main.R")
+source("lassoSSNAL/Classic_Lasso_SSNCG.R")
+source("lassoSSNAL/proj_inf.R")
 
 eps <- 2.220446e-16 # Copy the MATLAB eps essentially
 
-#30secs
 data <- readMat("UCIdata/abalone_scale_expanded7.mat")
-
+Rprof()
 AtA <- t(data$A) %*% data$A #2mins15secs
+summaryRprof()
 eigs_AtA <- eigs_sym(AtA,1) #instant
+Rprof(NULL)
+
+#30secs
 
 A <- data$A
 At <- t(data$A)
