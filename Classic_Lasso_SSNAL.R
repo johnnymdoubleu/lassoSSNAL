@@ -44,8 +44,6 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
     else if (Ascale == 2){
       dscale <- 1 / sqrt(colSums(A*A))
     }
-    
-    #print(dscale)
     #readline("Hello")
     
     #A <- A %*% diag(dscale,n,n)
@@ -81,10 +79,12 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   )
   if("Sigma" %in% names(options)) parmain$Sigma = options$Sigma
   
-  #DBUGGING return(parmain)
+  #DBUGGING 
+  # return(parmain)
   # obj_main,y,xi,x,info_main,runhist <-  Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lambda,parmain,y,xi,x)
-  #return(list(x,xi,y))
-  return(Classic_Lasso_SSNAL_main(A,b,lambda,parmain,y,xi,x))
+  # return(list(x,xi,y))
+  rescale <- Classic_Lasso_SSNAL_main(A,b,lambda,parmain,y,xi,x)
+  return(rescale)
   
   iter <- info_main$iter
   bscale <- info_main$bscale
@@ -96,7 +96,6 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   if (iter == maxiter){
     msg <- "Maximum iteration reached"
   }
-  
   xi <- xi * sqrt(bscale * cscale)
   Atxi <- t(A) %*% xi
   y <- y %*% cscale
@@ -147,19 +146,19 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
                nnz = findnnz(x, 0.999),
                x = x
   )
-  if (printyes){
-    if (is.null(msg)){
-      printf('\n %d', msg)
-    }
-    printf('\n  number iter = %2.0d',iter)
-    printf('\n  time = %3.2d',ttime)
-    printf('\n  time per iter = %5.4d', ttime/iter)
-    printf('\n  primobj = %9.8d, dualobj = %9.8d, relgap = %3.2d',primobj,dualobj, relgap)
-    printf('\n  primfeasorg = %3.2d, dualfeasorg = %3.2d',primfeasorg, dualfeasorg)
-    printf('\n  eta = %3.2, etaorg = %3.2', eta, etaorg)
-    printf('\n  min(X) = %3.2d, max(X) = %3.2d', info$minx,info$maxx)
-    printf('\n  Amap cnt = %3d, ATmap cnt = %3d, partial AATmap cnt = %3d, full AATmap cnt = %3d', info$cnt_Amap, info$cnt_ATmap, info$cnt_pAATmap, info$cnt_fAATmap)
-    printf('\n  number of nonzeros in x (0.999) = %3.0d',findnnz(x,0.999))
-  }
+  # if (printyes){
+  #   if (is.null(msg)){
+  #     printf('\n %d', msg)
+  #   }
+  #   printf('\n  number iter = %2.0d',iter)
+  #   printf('\n  time = %3.2d',ttime)
+  #   printf('\n  time per iter = %5.4d', ttime/iter)
+  #   printf('\n  primobj = %9.8d, dualobj = %9.8d, relgap = %3.2d',primobj,dualobj, relgap)
+  #   printf('\n  primfeasorg = %3.2d, dualfeasorg = %3.2d',primfeasorg, dualfeasorg)
+  #   printf('\n  eta = %3.2, etaorg = %3.2', eta, etaorg)
+  #   printf('\n  min(X) = %3.2d, max(X) = %3.2d', info$minx,info$maxx)
+  #   printf('\n  Amap cnt = %3d, ATmap cnt = %3d, partial AATmap cnt = %3d, full AATmap cnt = %3d', info$cnt_Amap, info$cnt_ATmap, info$cnt_pAATmap, info$cnt_fAATmap)
+  #   printf('\n  number of nonzeros in x (0.999) = %3.0d',findnnz(x,0.999))
+  # }
   
 }

@@ -22,15 +22,15 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
   lambdaorg <- lambda
   borg <- b
   normborg <- 1 + norm(borg,"2")
-  Atxi <- t(A)%*%xi
-  Ax <- A%*%x
+  Atxi <- eigenMatMult(t(A), xi, n_cores=4) #t(A)%*%xi
+  Ax <- eigenMatMult(A, x, n_cores=4) #A%*%x
   
   obj1 <- 0.5 * norm(Ax - borg, "2")^2 + lambdaorg*norm(x) + orgojbconst
   obj2 <- -(0.5*(norm(xi,"2")^2)+t(borg) %*% xi) + orgojbconst
   
-  #return(rescale)
-  #return(c(obj1,obj2))
-  #return(scale)
+  # return(rescale)
+  # return(c(obj1,obj2, rescale, scale))
+  # return(scale)
   bscale <- 1
   cscale <- 1
   if (scale == 1){
@@ -63,8 +63,8 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
   #Ainput_nal = list(Amap = Amap,
   #                  ATmap = ATmap,
   #                  
-  #)
-  
+  # #)
+  # return(normb)
   #if (existA){Ainput_nal <- c(Ainput_nal, A=A)}
   sigma = max(1/sqrt(Lip), min(c(1,sigmaLip,lambdaorg)))
   #return(sigma)
@@ -84,9 +84,15 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
   runhist <- list(dualfeasorg1 = dualfeasorg,
                   primfeasorg1 = primfeasorg)
   
+<<<<<<< Updated upstream
   return(c(primfeas,dualfeas,primfeasorg,
           dualfeasorg,
            maxfeas,maxfeasorg,relgap))
+=======
+  # return(c(primfeas,dualfeas,primfeasorg,
+  #         dualfeasorg,
+  #          maxfeas,maxfeasorg,relgap))
+>>>>>>> Stashed changes
   
   #if (printyes) {
   #  printf('\n \t\t   Classic Lasso: SSNAL      ')
@@ -182,14 +188,14 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
     else if(dualfeas > 1e-1){maxitersub <- max(maxitersub, 20)}
     ssncgop <- c(ssncgop, maxitersub = maxitersub)
     
-    #return(c(n,mean(b),mean(x),
-    #         mean(Ax),mean(Atxi),mean(xi),mean(ld)))
+    return(c(n,mean(b),mean(x),
+            mean(Ax),mean(Atxi),mean(xi),mean(ld)))
     
     #return(ssncgop)
     
     #c(y,Atxi, xi, parNCG, runhist_NCG, info_NCG) <- classic_Lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
     
-    return(Classic_Lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop))
+    # return(Classic_Lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop))
     
     if (info_ncg$breakyes < 0){
       parNCG$tolconst <- max(parNCG$tolconst/1.06, 1e-3)
