@@ -1,4 +1,4 @@
-Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, options) {
+Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) {
   printsub = 1
   breakyes = 0
   maxitersub = 50
@@ -46,7 +46,7 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
   xi = xi0
   Ly = t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2
   
-  return(Ly)
+  runhist<-list()
   
   runhist$psqmr[1] = 0
   runhist$findstep[1] = 0
@@ -54,6 +54,9 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
   cnt_ATmap = 0
   cnt_pAATmap = 0
   cnt_fAATmap = 0
+  
+  #return(maxitersub)
+  
   
   for (itersub in seq(1,maxitersub)) {    
     yold = y
@@ -64,16 +67,22 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
     #%Ly = b'*xi - 0.5*norm(xi)^2 - 0.5*sig*norm(ytmp)^2;
     #  msigAytmp = -sig*Amap(ytmp);
     msigAytmp = -sig * A %*% ytmp
+    #return(msigAytmp)
+    #return(normRd)
     GradLxi = -(xi - b + msigAytmp)
     cnt_Amap = cnt_Amap + 1
     normGradLxi = norm(GradLxi,"2")*sqrt(bscale*cscale)/normborg
     priminf_sub = normGradLxi
     
+    #return(priminf_sub)
+    
     if(Ascaleyes == 1) {
       dualinf_sub = norm(Rdz/options$dscale,"2")*cscale/(1+norm(y/options$dscale,"2")*cscale)
     } else {
-      dualinf_sub = normRd*cscale/(1+norm(y)*cscale)
+      dualinf_sub = normRd*cscale/(1+norm(y,"2")*cscale)
     }
+    
+    #return(dualinf_sub)
     
     if(max(priminf_sub,dualinf_sub) < tol) {
       tolsubconst = 0.9
@@ -85,6 +94,8 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
     runhist$priminf[itersub] = priminf_sub
     runhist$dualinf[itersub] = dualinf_sub
     runhist$Ly[itersub]      = Ly
+    
+    #return(tolsub)
     
     #if (printsub)
     #  fprintf('\n      %2.0d  %- 11.10e %3.2e %3.2e %3.2e',...
@@ -101,9 +112,12 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
       breakyes = -1;
       break;
     }
-    
+    #return(breakyes)
     #%% Compute Newton direction
     #%% precond = 0, 
+    
+    
+    
     par$epsilon = min(1e-3,0.1*normGradLxi) #%% good to add
     par$precond = precond
     if(precond == 1) {
@@ -118,6 +132,8 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
     } else if (dualinf_sub > 5e-6) {
       maxitpsqmr = max(maxitpsqmr,500) 
     }
+    
+    #return(maxitpsqmr)
     
     if (itersub > 1) {
       prim_ratio = priminf_sub/runhist$priminf[itersub-1]
@@ -134,7 +150,9 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
     #else
     #end
     
-    tolpsqmr = min(5e-3, 0.1*norm(rhs))
+    tolpsqmr = min(5e-3, 0.1*norm(rhs,"2"))
+    
+    #return(norm(rhs,"2"))
     
     const2 = 1
     if (itersub > 1 && (prim_ratio > 0.5 || priminf_sub > 0.1*runhist$priminf[1]) ) {
@@ -147,13 +165,27 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
     par$tol = tolpsqmr
     par$maxit = maxitpsqmr
     
+    #return(c(tolpsqmr,maxitpsqmr))
+    
     ## REMEMBER TO CHANGE FOR NATIVE SOLVER
     #[dxi,resnrm,solve_ok] = Classic_Lasso_linsys_solver(Ainput,rhs,par)
     ##############
     
+    lsout <- linsyssolve(A,rhs,par)
+    dxi <- lsout$xi
+    resnrm <- lsout$resnrm
+    solve_ok <- lsout$solve_ok
+    
+    #return(sum(dxi))
+    
+    
+    
     Atdxi = t(A) %*% dxi
     cnt_ATmap = cnt_ATmap + 1
     iterpsqmr = length(resnrm)-1
+    
+    #return(iterpsqmr)
+    
     if (iterpsqmr ==0) {
       cnt_pAATmap = cnt_pAATmap + 1
     } else {
@@ -163,6 +195,8 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
         cnt_fAATmap = cnt_fAATmap + iterpsqmr
       }
     }
+    
+    #return(c(cnt_pAATmap,cnt_fAATmap))
     
     #if (printsub)
     #  fprintf('| %3.1e %3.1e %3.0d %-3d',par.tol,resnrm(end),iterpsqmr);
@@ -176,8 +210,10 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
       stepop = 2
     }
     steptol = 1e-5
+    step_op<-list()
     step_op$stepop=stepop
     
+    return(stepop)
     ## IMPLEMENT findstep() FUNCTION!!
     #[par,Ly,xi,Atxi,y,ytmp,alp,iterstep] = ...
     #findstep(par,b,ld,Ly,xi,Atxi,y,ytmp,dxi,Atdxi,steptol,step_op); 
