@@ -67,7 +67,7 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
   # return(normb)
   #if (existA){Ainput_nal <- c(Ainput_nal, A=A)}
   sigma = max(1/sqrt(Lip), min(c(1,sigmaLip,lambdaorg)))
-  #return(sigma)
+  return(sigma)
   if (Ascaleyes){sigma <- 3}
   if ("sigma" %in% names(parmain)){sigma <- parmain$sigma}
   #return(c(obj1,obj2))
@@ -84,15 +84,15 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
   runhist <- list(dualfeasorg1 = dualfeasorg,
                   primfeasorg1 = primfeasorg)
   
-<<<<<<< Updated upstream
-  return(c(primfeas,dualfeas,primfeasorg,
-          dualfeasorg,
-           maxfeas,maxfeasorg,relgap))
-=======
+
   # return(c(primfeas,dualfeas,primfeasorg,
   #         dualfeasorg,
   #          maxfeas,maxfeasorg,relgap))
->>>>>>> Stashed changes
+
+  # return(c(primfeas,dualfeas,primfeasorg,
+  #         dualfeasorg,
+  #          maxfeas,maxfeasorg,relgap))
+
   
   #if (printyes) {
   #  printf('\n \t\t   Classic Lasso: SSNAL      ')
