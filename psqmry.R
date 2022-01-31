@@ -76,7 +76,7 @@ psqmr <- function(matvec, A, b, par, x0, Ax0){
     ##-------------stopping conditions---------
     Ad <- gam*Ad + eta*Aq
     res <- res - Ad
-    err <- fnorm(res)
+    err <- norm(res,"2")
     resnrm <- c(resnrm,err)
     if (err < minres) minres <- err
     if ((err < tol) && (iter > miniter) && (t(b) %*% x > 0)) break
