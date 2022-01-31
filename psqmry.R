@@ -107,51 +107,8 @@ psqmr <- function(matvec, A, b, par, x0, Ax0){
     if (printlevel) cat(' ')
   }
   
-  return (list("x"=x,"resnrm"=resnrm,"solve_ok"=solve_ok))
+  return (list("x"=x, "Ax"=Ax, "resnrm"=resnrm,"solve_ok"=solve_ok))
 }
-
-
-# psqmry <- function(matvec, A, b, par, x0=NULL, Ax0=NULL){
-#   N <- length(b)
-#   maxit <- max(5000, sqrt(N))
-#   tol <- 1e-6 * norm(b, "2")
-#   stagnate_check <- 20
-#   miniter <- 0
-#   
-#   # nargin <- length(as.list(match.call()))-1
-#   # if(nargin < 5){
-#   #   x0 <- matrix(0, N)
-#   # }
-#   # I am using !exists() here as nargin is not available in R
-#   
-#   if (is.null(x0)){x0 <- matrix(0, N)}
-#   if ("maxit" %in% names(par)){maxit <- par$maxit}
-#   if ("tol" %in% names(par)){tol <- par$tol}
-#   if ("stagnate_check_psqmr" %in% names(par)){stagnate_check <- par$stagnate_check_psqmr}
-#   if ("minitpsqmr" %in% names(par)){miniter <- par$minitpsqmr}
-#   
-#   solve.ok <- 1
-#   printlevel <- 0
-#   
-#   x <- x0
-#   if (norm(x,"2") > 0){
-#     if (is.null(Ax0)){
-#       Ax0 <- feval(matvec, x0, par, A)
-#     }
-#     Aq <- Ax0
-#   }
-#   else {
-#     Aq <- matrix(0, N)
-#   }
-#   r <- b - Aq
-#   err <- norm(r)
-#   resnrm <- rep(NA, maxit)
-#   resnrm[1] <- err
-#   minres <- err
-#   
-#   q <- precondfun()
-#   
-# }
 
 feval <- function(file.name, ...){
   do.call(file.name,list(...))

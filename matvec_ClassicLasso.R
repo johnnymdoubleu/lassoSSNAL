@@ -4,7 +4,7 @@ matvec_Classic_Lasso <- function(y, par, AP){
 }
 
 matvec_Classic_Lasso_Amap <- function(y, par, Ainput) {
-  temp <- Ainput$ATmpa[y]
+  temp <- Ainput$ATmap[y]
   temp <- (1-par$rr) * temp
   Ay <- y + par$sigma * Ainput$Amap[temp]
 }
