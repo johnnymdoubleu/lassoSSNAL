@@ -52,5 +52,8 @@ source("Classic_Lasso_SSNAL_main.R")
 source("Classic_Lasso_SSNCG.R")
 source("proj_inf.R")
 source("linsyssolve.R")
+source("findstep.R")
+source("psqmry.R")
+source("matvec_ClassicLasso.R")
 
 Classic_Lasso_SSNAL(A,b,n,rho,opts)

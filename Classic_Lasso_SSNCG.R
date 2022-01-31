@@ -213,11 +213,23 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     step_op<-list()
     step_op$stepop=stepop
     
-    return(stepop)
+    #return(stepop)
     ## IMPLEMENT findstep() FUNCTION!!
     #[par,Ly,xi,Atxi,y,ytmp,alp,iterstep] = ...
     #findstep(par,b,ld,Ly,xi,Atxi,y,ytmp,dxi,Atdxi,steptol,step_op); 
     ###########
+    
+    #return(findstep(par,b,ld,Ly,xi,Atxi,y,ytmp,dxi,Atdxi,steptol,step_op))
+    
+    fsret <- findstep(par,b,ld,Ly,xi,Atxi,y,ytmp,dxi,Atdxi,steptol,step_op)
+    par = fsret$par
+    Ly = fsret$Ly
+    xi = fsret$xi
+    Atxi = fsret$Atxi
+    y = fsret$y
+    ytmp = fsret$ytmp
+    alp = fsret$alp
+    iterstep = fsret$iter
     
     runhist$solve_ok[itersub] = solve_ok
     runhist$psqmr[itersub]    = iterpsqmr 
@@ -227,6 +239,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     if (itersub > 1) {
       Ly_ratio = (Ly-runhist$Ly[itersub-1])/(abs(Ly)+eps)
     }
+    
+    print(Ly_ratio)
     #if (printsub)
     #  fprintf(' %3.2e %2.0f',alp,iterstep);
     #if (Ly_ratio < 0); fprintf('-'); end
@@ -328,5 +342,14 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
   info$cnt_pAATmap = cnt_pAATmap
   info$cnt_fAATmap = cnt_fAATmap
   
-  return(c(y,Atxi,xi,par,runhist,info))
+  
+  output <- list(y = y,
+                 Atxi = Atxi,
+                 xi = xi,
+                 par = par,
+                 runhist = runhist,
+                 info = info)
+  return(output)
+  
+  #return(c(y,Atxi,xi,par,runhist,info))
 }
