@@ -11,5 +11,6 @@ proj_inf <- function(x, lambda){
   rr <- (y==x)
   rr <- Matrix(rr)*1
   #print(rr)
+  # return(c(y, rr))
   return(list(y=y, rr=rr))
 }

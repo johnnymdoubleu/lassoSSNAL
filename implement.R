@@ -1,5 +1,8 @@
+<<<<<<< Updated upstream
 library(Matrix)
 # library(R.matlab)
+=======
+>>>>>>> Stashed changes
 library(rmatio)
 library(RSpectra)
 library(Rcpp)
@@ -8,9 +11,17 @@ source("lassoSSNAL/Classic_Lasso_SSNAL.R")
 source("lassoSSNAL/Classic_Lasso_SSNAL_main.R")
 source("lassoSSNAL/Classic_Lasso_SSNCG.R")
 source("lassoSSNAL/proj_inf.R")
+<<<<<<< Updated upstream
 # source("lassoSSNAL/linsyssolve.R")
 sourceCpp("lassoSSNAL/test.cpp")
 
+=======
+source("lassoSSNAL/linsyssolve.R")
+source("lassoSSNAL/findstep.R")
+
+sourceCpp("lassoSSNAL/test.cpp")
+sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
+>>>>>>> Stashed changes
 
 eps <- 2.220446e-16 # Copy the MATLAB eps essentially
 
@@ -48,6 +59,7 @@ opts$Ascale <- 1
 #2mins
 test<-Classic_Lasso_SSNAL(A,b,n,rho,opts)
 test
+<<<<<<< Updated upstream
 Rprof(NULL)
 summaryRprof()
 #as.numeric(strsplit(format(Sys.time(), "%Y %m %d %H %M %S")," ")[[1]])/rep(1000,6)
@@ -55,3 +67,8 @@ summaryRprof()
 
 
 Classic_Lasso_SSNAL(A,b,n,rho,opts)
+=======
+#as.numeric(strsplit(format(Sys.time(), "%Y %m %d %H %M %S")," ")[[1]])/rep(1000,6)
+#A%*%Diagonal(x=test$dscale)
+# Classic_Lasso_SSNAL(A,b,n,rho,opts)
+>>>>>>> Stashed changes

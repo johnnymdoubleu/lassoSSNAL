@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, options) {
   printsub = 1
   breakyes = 0
@@ -7,6 +8,17 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
   maxitpsqmr =500
   precond = 0
   Ascaleyes = 0
+=======
+Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) {
+  printsub <- 1
+  breakyes <- 0
+  maxitersub <- 50
+  tiny <- 1e-10
+  tol <- 1e-6
+  maxitpsqmr <- 500
+  precond <- 0
+  Ascaleyes <- 0
+>>>>>>> Stashed changes
   
   if ("printsub" %in% names(options)) printsub = options$printsub
   if ("maxitersub" %in% names(options)) maxitersub = options$maxitersub
@@ -15,13 +27,13 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
   if ("precond" %in% names(options)) precond = options$precond
   if ("Ascaleyes" %in% names(options)) Ascaleyes = options$Ascaleyes
   
-  existA = options$existA
-  sig = par$sigma
-  bscale = options$bscale
-  cscale = options$cscale
-  normborg = 1+norm(b,"2")*sqrt(bscale*cscale)
+  existA <- options$existA
+  sig <- par$sigma
+  bscale <- options$bscale
+  cscale <- options$cscale
+  normborg <- 1+norm(b,"2")*sqrt(bscale*cscale)
   
-  #return(normborg)
+  # return(normborg)
   
   #%% preperation
   #Amap = @(x) Ainput.Amap(x);
@@ -29,62 +41,83 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
   
   # CHANGE ALL OCCURRENCES OF Amap and ATmap to raw calls
   
-  yinput = -Atxi0 - x0/sig
+  yinput <- -Atxi0 - x0/sig
   #return(mean(yinput))
   pi_out <- proj_inf(yinput,ld)
   
   # PROJ_INF IS IN 'solvers' FOLDER!
-  par$rr = pi_out$rr
-  y = pi_out$y
+  par$rr <- pi_out$rr
+  y <- pi_out$y
   
-  #return(c(mean(par$rr),mean(y)))
+  # return(c(mean(par$rr),mean(y)))
   
-  Rpb = Ax0 - b + xi0
-  normRp = norm(Rpb,"2")
-  ytmp = yinput - y
-  Atxi = Atxi0
-  xi = xi0
-  Ly = t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2
+  Rpb <- Ax0 - b + xi0
+  normRp <- norm(Rpb,"2")
+  ytmp <- yinput - y
+  Atxi <- Atxi0
+  xi <- xi0
+  Ly <- t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2
   
+<<<<<<< Updated upstream
   return(Ly)
+=======
+  runhist <-list()
+>>>>>>> Stashed changes
   
   runhist$psqmr[1] = 0
   runhist$findstep[1] = 0
-  cnt_Amap = 0
-  cnt_ATmap = 0
-  cnt_pAATmap = 0
-  cnt_fAATmap = 0
+  cnt_Amap <- 0
+  cnt_ATmap <- 0
+  cnt_pAATmap <- 0
+  cnt_fAATmap <- 0
   
   for (itersub in seq(1,maxitersub)) {    
-    yold = y
-    xiold = xi
-    Atxiold = Atxi
-    Rdz = Atxi + y;
-    normRd = norm(Rdz,"2")
+    yold <- y
+    xiold <- xi
+    Atxiold <- Atxi
+    Rdz <- Atxi + y;
+    normRd <- norm(Rdz,"2")
     #%Ly = b'*xi - 0.5*norm(xi)^2 - 0.5*sig*norm(ytmp)^2;
     #  msigAytmp = -sig*Amap(ytmp);
+<<<<<<< Updated upstream
     msigAytmp = -sig * A %*% ytmp
     GradLxi = -(xi - b + msigAytmp)
     cnt_Amap = cnt_Amap + 1
     normGradLxi = norm(GradLxi,"2")*sqrt(bscale*cscale)/normborg
     priminf_sub = normGradLxi
     
+=======
+    msigAytmp <- -sig * A %*% ytmp
+    # return(sum(msigAytmp))
+    #return(normRd)
+    GradLxi <- -(xi - b + msigAytmp)
+    cnt_Amap <- cnt_Amap + 1
+    normGradLxi <- norm(GradLxi,"2")*sqrt(bscale*cscale)/normborg
+    priminf_sub <- normGradLxi
+    
+    return(priminf_sub)
+    
+>>>>>>> Stashed changes
     if(Ascaleyes == 1) {
-      dualinf_sub = norm(Rdz/options$dscale,"2")*cscale/(1+norm(y/options$dscale,"2")*cscale)
+      dualinf_sub <- norm(Rdz/options$dscale,"2")*cscale/(1+norm(y/options$dscale,"2")*cscale)
     } else {
+<<<<<<< Updated upstream
       dualinf_sub = normRd*cscale/(1+norm(y)*cscale)
+=======
+      dualinf_sub <- normRd*cscale/(1+norm(y,"2")*cscale)
+>>>>>>> Stashed changes
     }
     
     if(max(priminf_sub,dualinf_sub) < tol) {
-      tolsubconst = 0.9
+      tolsubconst <- 0.9
     } else {
-      tolsubconst = 0.05
+      tolsubconst <- 0.05
     }
     
-    tolsub = max(min(1,par$tolconst*dualinf_sub),tolsubconst*tol)
-    runhist$priminf[itersub] = priminf_sub
-    runhist$dualinf[itersub] = dualinf_sub
-    runhist$Ly[itersub]      = Ly
+    tolsub <- max(min(1,par$tolconst*dualinf_sub),tolsubconst*tol)
+    runhist$priminf[itersub] <- priminf_sub
+    runhist$dualinf[itersub] <- dualinf_sub
+    runhist$Ly[itersub]      <- Ly
     
     #if (printsub)
     #  fprintf('\n      %2.0d  %- 11.10e %3.2e %3.2e %3.2e',...
@@ -98,69 +131,103 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
       #fprintf(' dualinfes = %3.2e, gradLyxi = %3.2e, tolsub = %3.2e',...
       #        dualinf_sub,normGradLxi,tolsub);
       #end
-      breakyes = -1;
+      breakyes <- -1;
       break;
     }
     
     #%% Compute Newton direction
     #%% precond = 0, 
+<<<<<<< Updated upstream
     par$epsilon = min(1e-3,0.1*normGradLxi) #%% good to add
     par$precond = precond
+=======
+    
+    
+    
+    par$epsilon <- min(1e-3,0.1*normGradLxi) #%% good to add
+    par$precond <- precond
+>>>>>>> Stashed changes
     if(precond == 1) {
-      par$invdiagM = 1/(1+sig)
+      par$invdiagM <- 1/(1+sig)
     }
     if( (dualinf_sub > 1e-3) || (itersub <= 5) ) {
-      maxitpsqmr = max(maxitpsqmr,200)
+      maxitpsqmr <- max(maxitpsqmr,200)
     } else if (dualinf_sub > 1e-4) {	 
-      maxitpsqmr = max(maxitpsqmr,300) 
+      maxitpsqmr <- max(maxitpsqmr,300) 
     } else if (dualinf_sub > 1e-5) {	 
-      maxitpsqmr = max(maxitpsqmr,400) 
+      maxitpsqmr <- max(maxitpsqmr,400) 
     } else if (dualinf_sub > 5e-6) {
-      maxitpsqmr = max(maxitpsqmr,500) 
+      maxitpsqmr <- max(maxitpsqmr,500) 
     }
     
     if (itersub > 1) {
-      prim_ratio = priminf_sub/runhist$priminf[itersub-1]
-      dual_ratio = dualinf_sub/runhist$dualinf[itersub-1]
+      prim_ratio <- priminf_sub/runhist$priminf[itersub-1]
+      dual_ratio <- dualinf_sub/runhist$dualinf[itersub-1]
     } else {
-      prim_ratio = 0
-      dual_ratio = 0
+      prim_ratio <- 0
+      dual_ratio <- 0
     }
     
-    rhs = GradLxi
+    rhs <- GradLxi
     
     #if (Ascaleyes == 1 && false
     #tolpsqmr = min(5e-3, 0.1*norm(rhs));
     #else
     #end
     
+<<<<<<< Updated upstream
     tolpsqmr = min(5e-3, 0.1*norm(rhs))
+=======
+    tolpsqmr <- min(5e-3, 0.1*norm(rhs,"2"))
     
-    const2 = 1
+    #return(norm(rhs,"2"))
+>>>>>>> Stashed changes
+    
+    const2 <- 1
     if (itersub > 1 && (prim_ratio > 0.5 || priminf_sub > 0.1*runhist$priminf[1]) ) {
-      const2 = 0.5*const2
+      const2 <- 0.5*const2
     }
     
-    if (dual_ratio > 1.1) const2 = 0.5*const2
+    if (dual_ratio > 1.1) {
+      const2 <- 0.5*const2
+    }
     
-    tolpsqmr = const2*tolpsqmr
-    par$tol = tolpsqmr
-    par$maxit = maxitpsqmr
+    tolpsqmr <- const2*tolpsqmr
+    par$tol <- tolpsqmr
+    par$maxit <- maxitpsqmr
     
     ## REMEMBER TO CHANGE FOR NATIVE SOLVER
     #[dxi,resnrm,solve_ok] = Classic_Lasso_linsys_solver(Ainput,rhs,par)
     ##############
     
+<<<<<<< Updated upstream
     Atdxi = t(A) %*% dxi
     cnt_ATmap = cnt_ATmap + 1
     iterpsqmr = length(resnrm)-1
+=======
+    lsout <- linsyssolve(A,rhs,par)
+    dxi <- lsout$xi
+    resnrm <- lsout$resnrm
+    solve_ok <- lsout$solve_ok
+    
+    #return(sum(dxi))
+    
+    
+    
+    Atdxi <- t(A) %*% dxi
+    cnt_ATmap <- cnt_ATmap + 1
+    iterpsqmr <- length(resnrm)-1
+    
+    #return(iterpsqmr)
+    
+>>>>>>> Stashed changes
     if (iterpsqmr ==0) {
-      cnt_pAATmap = cnt_pAATmap + 1
+      cnt_pAATmap <- cnt_pAATmap + 1
     } else {
       if (existA==TRUE) {
-        cnt_pAATmap = cnt_pAATmap + iterpsqmr
+        cnt_pAATmap <- cnt_pAATmap + iterpsqmr
       } else {
-        cnt_fAATmap = cnt_fAATmap + iterpsqmr
+        cnt_fAATmap <- cnt_fAATmap + iterpsqmr
       }
     }
     
@@ -171,25 +238,42 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
     
     par$iter = itersub;
     if ((itersub<=3) && (dualinf_sub > 1e-4) || (par$iter <3)) {
-      stepop = 1
+      stepop <- 1
     } else {
-      stepop = 2
+      stepop <- 2
     }
+<<<<<<< Updated upstream
     steptol = 1e-5
     step_op$stepop=stepop
     
+=======
+    steptol <- 1e-5
+    step_op <- list()
+    step_op$stepop <- stepop
+    
+    # return(step_op)
+>>>>>>> Stashed changes
     ## IMPLEMENT findstep() FUNCTION!!
-    #[par,Ly,xi,Atxi,y,ytmp,alp,iterstep] = ...
-    #findstep(par,b,ld,Ly,xi,Atxi,y,ytmp,dxi,Atdxi,steptol,step_op); 
+    c(par, Ly, xi, Atxi, y, ytmp, alp, iterstep) <- findstep(par, b, ld, Ly, xi, Atxi, y, ytmp, dxi, Atdxi, steptol, step_op)
     ###########
     
+<<<<<<< Updated upstream
     runhist$solve_ok[itersub] = solve_ok
     runhist$psqmr[itersub]    = iterpsqmr 
     runhist$findstep[itersub] = iterstep 
     if (alp < tiny) breakyes =11
     Ly_ratio = 1
+=======
+    runhist$solve_ok[itersub] <- solve_ok
+    runhist$psqmr[itersub]    <- iterpsqmr 
+    runhist$findstep[itersub] <- iterstep 
+    if (alp < tiny){
+      breakyes <- 11
+    }
+    Ly_ratio <- 1
+>>>>>>> Stashed changes
     if (itersub > 1) {
-      Ly_ratio = (Ly-runhist$Ly[itersub-1])/(abs(Ly)+eps)
+      Ly_ratio <- (Ly-runhist$Ly[itersub-1])/(abs(Ly)+eps)
     }
     #if (printsub)
     #  fprintf(' %3.2e %2.0f',alp,iterstep);
@@ -199,9 +283,9 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
     ### CHECK FOR STAGNATION LINE 161 GitHub code
     #%% check for stagnation
     if (itersub > 4) {
-      idx = seq(max(1,itersub-3),itersub)
-      tmp = runhist$priminf[idx]
-      ratio = min(tmp)/max(tmp)
+      idx <- seq(max(1,itersub-3),itersub)
+      tmp <- runhist$priminf[idx]
+      ratio <- min(tmp)/max(tmp)
       if ((all(runhist$solve_ok[idx] <= -1)) && (ratio > 0.9)  
           && (min(runhist$psqmr[idx]) == max(runhist$psqmr[idx])) 
           && (max(tmp) < 5*tol)) {
@@ -292,5 +376,9 @@ Classic_Lasso_SSNCG <- function(n, b, Ainput, x0, Ax0, Atxi0, xi0, ld, par, opti
   info$cnt_pAATmap = cnt_pAATmap
   info$cnt_fAATmap = cnt_fAATmap
   
+<<<<<<< Updated upstream
   return(c(y,Atxi,xi,par,runhist,info))
+=======
+  # return(c(y,Atxi,xi,par,runhist,info))
+>>>>>>> Stashed changes
 }

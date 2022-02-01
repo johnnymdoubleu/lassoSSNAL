@@ -116,6 +116,7 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
                    tolconst = 0.5,
                    n = n)
   }
+  
   maxitersub <- 10
   breakyes <- 0
   prim_win <- 0
@@ -129,7 +130,7 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
   )
   if (Ascaleyes) {
     ssncgop <- c(ssncgop, Ascaleyes=1)
-    ssncgop$dscale = dscale
+    ssncgop$dscale <- dscale
   }
   else {ssncgop <- c(ssncgop, Ascaleyes = 0)}
   
@@ -138,7 +139,6 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
   if (Ascaleyes){
     sigmamax <- sigmamax * mean(dscale)
   }
-  
   # ADDED THESE LINES IN TO COMPLY WITH R NEED
   # FOR VARIABLES TO ACTUALLY EXIST BEFORE IF
   # STATEMENTS
@@ -155,7 +155,9 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
       normAtxi <- norm(Atxi, "2")
       normx <- norm(x,"2")
       normyxi <- max(normx, normAtxi)
-      #return(c(sigma, normx, normyxi, bscale, cscale))
+      # return(c(sigma, normx, normyxi, bscale, cscale))
+      
+      #set new c and b scales
       c(sigma, bscale2, cscale2, sbc, sboc, bscale, cscale) <- mexscale(sigma, normx, normyxi, bscale, cscale)
       
       Amap <- function(x) Amap(x*sboc)
@@ -165,10 +167,10 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
       if (exist(A)){Ainput_nal <- c(Ainput_nal, A= A*sboc)}
       b <- b/sbc
       ld <- ld / cscale2
-      x <- x/bscale2
-      xi <- xi/sbc
-      Atxi <- Atxi/cscale2
-      Ax <- Ax/sbc
+      x <- x / bscale2
+      xi <- xi / sbc
+      Atxi <- Atxi / cscale2
+      Ax <- Ax / sbc
       ssncgop$bscale <- bscale
       ssncgop$cscale <- cscale
       normb <- 1 + norm(b,"2")
@@ -180,6 +182,7 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
       prim_win <- 0
       dual_win <- 0
     }
+    # return(ssncgop)
     #return("Got here")
     xold <- x
     parNCG$sigma <- sigma
@@ -191,11 +194,15 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
     return(c(n,mean(b),mean(x),
             mean(Ax),mean(Atxi),mean(xi),mean(ld)))
     
-    #return(ssncgop)
+    # return(ssncgop)
     
-    #c(y,Atxi, xi, parNCG, runhist_NCG, info_NCG) <- classic_Lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
-    
+<<<<<<< Updated upstream
     # return(Classic_Lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop))
+=======
+    # c(y,Atxi, xi, parNCG, runhist_NCG, info_NCG) <- Classic_Lasso_SSNCG(n, b, A, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
+    # return(info_NCG)
+    return(Classic_Lasso_SSNCG(n,b,A, x, Ax, Atxi, xi, ld, parNCG, ssncgop))
+>>>>>>> Stashed changes
     
     if (info_ncg$breakyes < 0){
       parNCG$tolconst <- max(parNCG$tolconst/1.06, 1e-3)
@@ -206,12 +213,12 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
     
     normRd <- norm(Rd, "2")
     normy <- norm(y, "2")
-    dualfeas <- normRd / (1+normy)
+    dualfeas <- normRd / (1 + normy)
     if (Ascaleyes){
-      dualfeasorg <- norm(Rd / dscale, "2")*cscale / (1+norm(y/dscale,"2")*cscale)
+      dualfeasorg <- norm(Rd / dscale, "2")*cscale / (1 + norm(y / dscale,"2")*cscale)
     }
     else {
-      dualfeasorg <- normRd * cscale / (1+normy * cscale)
+      dualfeasorg <- normRd * cscale / (1 + normy * cscale)
     }
     Rp1 <- Ax - b
     Rp <- Rp1 + xi
@@ -236,11 +243,11 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
       grad <- ATmap0(Rp1 * sqrt(bscale * cscale))
       if (Ascaleyes) {
         etaorg <- norm(grad + projinf(dscale * x %*% bscale - grad, lambdaorg), "2")
-        eta <- etaord / (1 + norm(grad,"2")+norm(x%*%bscale))
+        eta <- etaord / (1 + norm(grad,"2")+norm(x %*% bscale))
       }
       else {
         etaorg <- norm(grad + projinf(x %*% bscale -grad, lambdaorg))
-        eta <- etaorg / (1 + norm(grad, "2") + norm(x%*% bscale))
+        eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale))
       }
       if (eta < stoptol) {
         breakyes <- 1
@@ -284,6 +291,8 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
     }
     c(sigma, prim_win, dual_win) <- mexsigma_update_classic_Lasso_SSNAL(sigma, sigmamax, sigmamin, prim_win, dual_win, iter, info_NCG$breakyes)
   }
+  
+  
   if (!printyes) {
     ttime <- toc() # end time
   }
