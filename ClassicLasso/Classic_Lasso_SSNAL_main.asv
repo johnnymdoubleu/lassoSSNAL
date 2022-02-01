@@ -186,7 +186,7 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
          maxitersub = max(maxitersub,20);
       end
       ssncgop.maxitersub = maxitersub; 
-
+%{
       fprintf('\n  n = %3.7f',n); %DBGGG
       fprintf('\n  b = %3.7f',mean(b)); %DBGGG
       fprintf('\n  x = %3.7f',mean(x)); %DBGGG
@@ -194,11 +194,16 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
       fprintf('\n  Atxi = %3.7f',mean(Atxi)); %DBGGG
       fprintf('\n  xi = %3.7f',mean(xi)); %DBGGG
       fprintf('\n  ld = %3.7f',mean(ld)); %DBGGG
-      fprintf('\n ssncgop_maxitersub = %')
+      fprintf('\n ssncgop_precond = %3.7f',ssncgop.precond);
+      fprintf('\n ssncgop_maxitersub = %3.7f',ssncgop.maxitersub);
       input("Stop") %DBG
-
+%}
       [y,Atxi,xi,parNCG,runhist_NCG,info_NCG] = ...
           Classic_Lasso_SSNCG(n,b,Ainput_nal,x,Ax,Atxi,xi,ld,parNCG,ssncgop);
+      
+      fprintf('\n ssncgop_maxitersub = %3.7f',ssncgop.maxitersub);
+      input("Stop") %DBG
+      
       if info_NCG.breakyes < 0
          parNCG.tolconst = max(parNCG.tolconst/1.06,1e-3);
       end

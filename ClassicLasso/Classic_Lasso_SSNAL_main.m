@@ -200,6 +200,14 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
 %}
       [y,Atxi,xi,parNCG,runhist_NCG,info_NCG] = ...
           Classic_Lasso_SSNCG(n,b,Ainput_nal,x,Ax,Atxi,xi,ld,parNCG,ssncgop);
+      
+      %{
+      fprintf('\n sy = %3.7f',sum(y));
+      fprintf('\n satxi = %3.7f',sum(Atxi));
+      fprintf('\n sxi = %3.7f',sum(xi));
+      fprintf('\n breakyes = %3.7f',info_NCG.breakyes);
+      input("Stop") %DBG
+      %}
       if info_NCG.breakyes < 0
          parNCG.tolconst = max(parNCG.tolconst/1.06,1e-3);
       end
