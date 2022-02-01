@@ -11,6 +11,7 @@ source("Classic_Lasso_SSNCG.R")
 source("proj_inf.R")
 
 sourceCpp("test.cpp")
+sourceCpp("mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 eps <- 2.220446e-16 # Copy the MATLAB eps essentially
 

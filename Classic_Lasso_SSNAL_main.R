@@ -201,24 +201,41 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
     print(sum(y))
     print(sum(Atxi))
     print(sum(xi))
-    return(info_NCG$breakyes)
+    print(info_NCG$breakyes)
     
-    if (info_ncg$breakyes < 0){
+    if (info_NCG$breakyes < 0){
       parNCG$tolconst <- max(parNCG$tolconst/1.06, 1e-3)
     }
+    
+    cat("parncg_tolconst=",parNCG$tolconst,"\n")
+    #return()
+    
     Rd <- Atxi + y
-    X <- -sigma * info_NCG$ytmp
+    x <- -sigma * info_NCG$ytmp
     Ax <- info_NCG$Ax
     
     normRd <- norm(Rd, "2")
     normy <- norm(y, "2")
+    
+    cat("normRd=",normRd,"\n")
+    cat("normy=",normy,"\n")
+    #return()
+    
     dualfeas <- normRd / (1+normy)
+    
+    cat("dualfeas=",dualfeas,"\n")
+    #return()
+    
     if (Ascaleyes){
       dualfeasorg <- norm(Rd / dscale, "2")*cscale / (1+norm(y/dscale,"2")*cscale)
     }
     else {
       dualfeasorg <- normRd * cscale / (1+normy * cscale)
     }
+    
+    cat("dualfeasorg=",dualfeasorg,"\n")
+    #return()
+    
     Rp1 <- Ax - b
     Rp <- Rp1 + xi
     normRp <- norm(Rp, "2")
@@ -226,6 +243,16 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
     primfeasorg <- sqrt(bscale * cscale) * normRp / normborg
     maxfeas <- max(primfeas, dualfeas)
     maxfeasorg <- max(primfeasorg, dualfeasorg)
+    
+    cat("normRp=",normRp,"\n")
+    cat("primfeas=",primfeas,"\n")
+    cat("primfeasorg=",primfeasorg,"\n")
+    cat("maxfeas=",maxfeas,"\n")
+    cat("maxfeasorg=",maxfeasorg,"\n")
+    cat("printyes=",printyes,"\n")
+    #return()
+    
+    
     runhist <- list( dualfeas = dualfeas,
                      primfeas = primfeas,
                      maxfeas = maxfeas,
@@ -238,6 +265,7 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
                      cnt_ATmap = info_NCG$cnt_ATmap,
                      cnt_pAATmap = info_NCG$cnt_pAATmap,
                      cnt_fAATmap = info_NCG$cnt_fAATmap)
+    
     if (max(primfeasorg, dualfeasorg) < 500 * max(1e-6, stoptol)) {
       grad <- ATmap0(Rp1 * sqrt(bscale * cscale))
       if (Ascaleyes) {
@@ -253,41 +281,68 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
         msg <- 'converged'
       }
     }
+    
+    
     if (printyes) {
       objscale <- bscale * cscale
-      primobj <- objscale * (0.5 * norm(Rp1, "2")^2 + norm(ld*x) + orgojbconst)
-      dualobj <- objscale * (-0.5 * norm(xi)^2 + t(b)%*% xi) + orgojbconst
+      primobj <- objscale * (0.5 * norm(Rp1, "2")^2 + norm(ld*x,"1")) + orgojbconst
+      dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + t(b)%*% xi) + orgojbconst
       relgap <- (primobj - dualobj)/(1+abs(primobj) + abs(dualobj))
       # ttime <- measure time
     }
-    printf('\n %5.0d| [%3.2e %3.2e] [%3.2e %3.2e]  %- 3.2e| %- 5.4e %- 5.4e |',iter,primfeas,dualfeas,primfeasorg,dualfeasorg,relgap,primobj,dualobj)
-    printf(' %5.1f| %3.2e|sigamorg = %3.2e  |',ttime, sigma, sigma*bscale/cscale)
+    
+    cat("primobj=",primobj,"\n")
+    cat("dualobj=",dualobj,"\n")
+    cat("relgap=",relgap,"\n")
+    #return()
+    
+    #printf('\n %5.0d| [%3.2e %3.2e] [%3.2e %3.2e]  %- 3.2e| %- 5.4e %- 5.4e |',iter,primfeas,dualfeas,primfeasorg,dualfeasorg,relgap,primobj,dualobj)
+    #printf(' %5.1f| %3.2e|sigamorg = %3.2e  |',ttime, sigma, sigma*bscale/cscale)
     if (iter >= 1){
-      printf('%3.0d|',sum(1- parNCG$rr))
+      #printf('%3.0d|',sum(1- parNCG$rr))
     }
-    if (exists(eta)){
-      printf('\n [eta = %3.2e, etaorg = %3.2e]',eta, etaorg)
-    }
+    #if (exists(eta)){
+    #  printf('\n [eta = %3.2e, etaorg = %3.2e]',eta, etaorg)
+    #}
     if (iter %% 3 == 1){
       normx <- norm(x,"2")
       normAtxi <- norm(Atxi,"2")
       normy <- norm(y,"2")
-      if (printyes) {
-        printf('\n        [normx,Atxi,y =%3.2e %3.2e %3.2e]',normx,normAtxi,normy)
-      }
+      #if (printyes) {
+      #  printf('\n        [normx,Atxi,y =%3.2e %3.2e %3.2e]',normx,normAtxi,normy)
+      #}
     }
-    runhist <- c(runhist, primobj = primobj, dualobj = dualobj, time = ttime, relgap = relgap)
+    
+    #runhist <- c(runhist, 
+    #             primobj[iter] = primobj, 
+    #             dualobj[iter] = dualobj,
+    #             time[iter] = ttime, 
+    #             relgap[iter] = relgap)
+    
+    #return(runhist)
+    
+    cat("breakyes=",breakyes,"\n")
+    #return()
+    
     if (breakyes > 0) {
-      if (printyes){
-        printf('\n  breakyes = %3.1f, %s',breakyes,msg)
-      }
+      #if (printyes){
+      #  printf('\n  breakyes = %3.1f, %s',breakyes,msg)
+      #}
+      break
     }
+    
     if(primfeasorg < dualfeasorg) {
       prim_win <- prim_win + 1
     }
     else {
       dual_win <- dual_win + 1
     }
+    
+    cat("prim_win=",prim_win,"\n")
+    cat("dual_win=",dual_win,"\n")
+    
+    return(mexsigma_update(sigma, sigmamax, sigmamin, prim_win, dual_win, iter, info_NCG$breakyes))
+    
     c(sigma, prim_win, dual_win) <- mexsigma_update_classic_Lasso_SSNAL(sigma, sigmamax, sigmamin, prim_win, dual_win, iter, info_NCG$breakyes)
   }
   if (!printyes) {

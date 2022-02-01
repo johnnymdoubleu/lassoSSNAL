@@ -208,19 +208,37 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
       fprintf('\n breakyes = %3.7f',info_NCG.breakyes);
       input("Stop") %DBG
       %}
+
       if info_NCG.breakyes < 0
          parNCG.tolconst = max(parNCG.tolconst/1.06,1e-3);
       end
+
+      fprintf('\n parncg tolconst = %3.7f',parNCG.tolconst);
+      %input("Stop") %DBG
+
       Rd = Atxi + y;
       x = -sigma*info_NCG.ytmp;
       Ax = info_NCG.Ax;
       normRd = norm(Rd); normy = norm(y);
+
+      fprintf('\n normrd = %3.7f',normRd);
+      fprintf('\n normy = %3.7f',normy);
+      %input("Stop") %DBG
+
       dualfeas = normRd/(1+normy);
+
+      fprintf('\n dualfeas = %3.7f',dualfeas);
+      %input("Stop") %DBG
+
       if Ascaleyes
          dualfeasorg = norm(Rd./dscale)*cscale/(1+norm(y./dscale)*cscale);
       else
          dualfeasorg = normRd*cscale/(1+normy*cscale);
       end
+
+      fprintf('\n dualfeasorg = %3.7f',dualfeasorg);
+      %input("Stop") %DBG
+
       Rp1 = Ax - b;
       Rp = Rp1 + xi;
       normRp = norm(Rp);
@@ -228,6 +246,15 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
       primfeasorg = sqrt(bscale*cscale)*normRp/normborg;
       maxfeas = max(primfeas,dualfeas);
       maxfeasorg = max(primfeasorg, dualfeasorg);
+
+      fprintf('\n normRp = %3.7f',normRp);
+      fprintf('\n primfeas = %3.7f',primfeas);
+      fprintf('\n primfeasorg = %3.7f',primfeasorg);
+      fprintf('\n maxfeas = %3.7f',maxfeas);
+      fprintf('\n maxfeasorg = %3.7f',maxfeasorg);
+      %input("Stop") %DBG
+
+
       runhist.dualfeas(iter+1) = dualfeas;
       runhist.primfeas(iter+1) = primfeas;
       runhist.maxfeas(iter+1)  = maxfeas;
@@ -244,6 +271,9 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
 %% check for termination
 %%---------------------------------------------------------    
       if (max([primfeasorg,dualfeasorg]) < 500*max(1e-6, stoptol)) 
+          %fprintf('\n Stopping here!');
+          %input("Stop") %DBG
+
           grad = ATmap0(Rp1*sqrt(bscale*cscale));
           if Ascaleyes
              etaorg = norm(grad + proj_inf(dscale.*x*bscale - grad,lambdaorg));
@@ -257,7 +287,7 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
              msg = 'converged';
           end
       end
-          
+      %input("Stop") %DBG
 %%--------------------------------------------------------    
 %% print results
 %%--------------------------------------------------------
@@ -288,7 +318,13 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
          runhist.dualobj(iter)   = dualobj;
          runhist.time(iter)      = ttime; 
          runhist.relgap(iter)    = relgap;
-      end    
+      end
+
+        fprintf('\n primobj=%3.7f',primobj);
+        fprintf('\n dualobj=%3.7f',dualobj);
+        fprintf('\n relgap=%3.7f',relgap);
+        %input("Stop") %DBG
+
       if (breakyes > 0) 
          if printyes
             fprintf('\n  breakyes = %3.1f, %s',breakyes,msg); 
@@ -300,8 +336,19 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
       else
          dual_win = dual_win+1; 
       end   
+
+      fprintf('\n prim_win = %3.7f',prim_win);
+      fprintf('\n dual_win = %3.7f',dual_win);
+      %input("Stop") %DBG
+
       [sigma,prim_win,dual_win] = ...
           mexsigma_update_Classic_Lasso_SSNAL(sigma,sigmamax,sigmamin,prim_win,dual_win,iter,info_NCG.breakyes);
+   
+      fprintf('\n sigma=%3.7f',sigma);
+      fprintf('\n prim_win = %3.7f',prim_win);
+      fprintf('\n dual_win = %3.7f',dual_win);
+      %input("Stop") %DBG
+
    end
    
    if ~printyes 
