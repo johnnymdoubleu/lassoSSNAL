@@ -30,17 +30,26 @@ linsyssolve <- function(Ainput, rhs, par){
     solver <- "d_pcg"
   }
   
-  #print(solver)
+  print(solver)
   
   if (solver == "d_pcg") {
     if (Ayes){
-      AP <- Ainput$A[,pp]
+      #AP <- Ainput$A[,pp]
+      AP <- Ainput[,pp]
+      #print("solverapsum")
+      #print(sum(AP))
       if (FALSE){
         tmp <- sum(AP * t(AP))
         par$precond <- 1
         par$invdiagM <- 1 / (1 + par$sigma*tmp)
       }
-      c(xi,psq, resnrm, solve_ok) <- psqmry('matvec_classicLasso_Amap',AP, rhs, par)
+      #c(xi,psq, resnrm, solve_ok) <- psqmry('matvec_classicLasso_Amap',AP, rhs, par)
+      #return(psqmry('matvec_Classic_Lasso',AP, rhs, par))
+      psqmryout <- psqmry('matvec_Classic_Lasso',AP, rhs, par)
+      output <- list(xi = psqmryout$x,
+                     resnrm = psqmryout$resnrm,
+                     solve_ok = psqmryout$solve_ok)
+      return(output)
     }
     else {
       c(xi,psq, resnrm, solve_ok) <- psqmry('matvec_classicLasso_Amap',Ainput, rhs, par)

@@ -189,7 +189,19 @@ Classic_Lasso_SSNAL_main <- function(A, b, lambda, parmain, y, xi, x){
     
     #c(y,Atxi, xi, parNCG, runhist_NCG, info_NCG) <- classic_Lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
     
-    return(Classic_Lasso_SSNCG(n,b,A, x, Ax, Atxi, xi, ld, parNCG, ssncgop))
+    #return(Classic_Lasso_SSNCG(n,b,A, x, Ax, Atxi, xi, ld, parNCG, ssncgop))
+    clssncgout <- Classic_Lasso_SSNCG(n,b,A, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
+    y <- clssncgout$y
+    Atxi <- clssncgout$Atxi
+    xi <- clssncgout$xi
+    parNCG <- clssncgout$par
+    runhist_NCG <- clssncgout$runhist
+    info_NCG <- clssncgout$info
+    
+    print(sum(y))
+    print(sum(Atxi))
+    print(sum(xi))
+    return(info_NCG$breakyes)
     
     if (info_ncg$breakyes < 0){
       parNCG$tolconst <- max(parNCG$tolconst/1.06, 1e-3)
