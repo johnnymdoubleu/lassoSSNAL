@@ -1,3 +1,16 @@
+#par,Ly,xi,Atxi,y,ytmp,alp,iterstep
+
+
+#output <- list(par = par,
+#               Ly = Ly,
+#               xi = xi,
+#               Atxi = Atxi,
+#               y = y,
+#               ytmp = ytmp,
+#               alp = alp,
+#               iter = iter)
+#return(output)
+
 findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
                      dxi,Atdxi,tol,options) {
   if("stepop" %in% names(options)) {
@@ -28,7 +41,15 @@ findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
     Ly = Ly0
     
     ## FINALIZE THIS!!
-    return
+    output <- list(par = par,
+                   Ly = Ly,
+                   xi = xi,
+                   Atxi = Atxi,
+                   y = y,
+                   ytmp = ytmp,
+                   alp = alp,
+                   iter = iter)
+    return(output)
   }
   
     alp = 1 
@@ -41,7 +62,7 @@ findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
       } else {
         alp = alpconst*(LB+UB)
       }
-      xi = xi0 + alp*dx
+      xi = xi0 + alp*dxi
       yinput = ytmp0 + y0 - alp*Atdxi
       
       ## DEAL WITH THIS!
@@ -66,7 +87,15 @@ findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
             Ly = t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2;             
             
             ## DEAL WITH THIS RETURN VALUE LATER
-            return()
+            output <- list(par = par,
+                           Ly = Ly,
+                           xi = xi,
+                           Atxi = Atxi,
+                           y = y,
+                           ytmp = ytmp,
+                           alp = alp,
+                           iter = iter)
+            return(output)
          }
       }
      
@@ -79,7 +108,15 @@ findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
           Atxi = Atxi0+alp*Atdxi;
           
           ### HERE!!!
-          return()           
+          output <- list(par = par,
+                         Ly = Ly,
+                         xi = xi,
+                         Atxi = Atxi,
+                         y = y,
+                         ytmp = ytmp,
+                         alp = alp,
+                         iter = iter)
+          return(output)         
         }
       }
           
@@ -97,5 +134,15 @@ findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
    #if (printlevel); fprintf('m'); end
    if (isempty(Ly)) {
       Ly = t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2            
-    }
+   }
+    
+    output <- list(par = par,
+                   Ly = Ly,
+                   xi = xi,
+                   Atxi = Atxi,
+                   y = y,
+                   ytmp = ytmp,
+                   alp = alp,
+                   iter = iter)
+    return(output)
 }

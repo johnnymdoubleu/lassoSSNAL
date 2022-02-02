@@ -11,6 +11,7 @@ source("Classic_Lasso_SSNCG.R")
 source("proj_inf.R")
 
 sourceCpp("test.cpp")
+sourceCpp("mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 eps <- 2.220446e-16 # Copy the MATLAB eps essentially
 
@@ -41,7 +42,7 @@ opts$Lip <- Lip
 opts$Ascale <- 1
 
 #2mins
-test<-Classic_Lasso_SSNAL(A,b,n,rho,opts)
+#test<-Classic_Lasso_SSNAL(A,b,n,rho,opts)
 
 #as.numeric(strsplit(format(Sys.time(), "%Y %m %d %H %M %S")," ")[[1]])/rep(1000,6)
 #A%*%Diagonal(x=test$dscale)
@@ -52,5 +53,14 @@ source("Classic_Lasso_SSNAL_main.R")
 source("Classic_Lasso_SSNCG.R")
 source("proj_inf.R")
 source("linsyssolve.R")
+source("findstep.R")
+source("psqmry.R")
+source("matvec_ClassicLasso.R")
+source("findnnz.R")
 
-Classic_Lasso_SSNAL(A,b,n,rho,opts)
+clo <- Classic_Lasso_SSNAL(A,b,n,rho,opts)
+
+print("-------------------------")
+cat("min(X) = ",clo$info$minx,"\n")
+cat("max(X) = ",clo$info$max,"\n")
+cat("nnz = ",findnnz(clo$info$x,0.999)$k,"\n")

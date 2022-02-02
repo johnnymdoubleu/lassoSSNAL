@@ -23,9 +23,18 @@
        solver = 'd_pcg';
     end
 %%
+
+    %fprintf('\n  solver = %s',solver); %DBGGG
+    %input("Stop") %DBG
+
     if strcmp(solver,'d_pcg')
        if Ayes
           AP = Ainput.A(:,pp);
+
+          %fprintf('\n  SP = %3.8f',sum(AP,'all')); %DBGGG
+          %fprintf('\n  SP = %3.8f',iterpsqmr); %DBGGG
+          %input("Stop") %DBG
+
           if false
              tmp = sum(AP.*AP,2);
              par.precond = 1;
@@ -52,11 +61,18 @@
     elseif strcmp(solver,'p_direct')
        AP = Ainput.A(:,pp);
        APT = AP';
+
+       %fprintf('\n  SP = %3.8f',size(AP)); %DBGGG
+       %input("Stop") %DBG
+
        rhstmp = APT*rhs; 
        PAtAP = APT*AP;
        if sp <= 1500
           M = eye(sp)/par.sigma + PAtAP;
           tmp = M\rhstmp;
+
+          %fprintf('\n  SP = %3.8f',size(rhstmp)); %DBGGG
+          %input("Stop") %DBG
        else
           M = speye(sp,sp)/par.sigma + PAtAP;
           L = mychol(M,sp);
@@ -64,5 +80,8 @@
        end
        resnrm = 0; solve_ok = 1;
        xi = rhs - AP*tmp;
+
+       %fprintf('\n  SP = %3.8f',sum(xi)); %DBGGG
+       %input("Stop") %DBG
     end
 %%**********************************************************************
