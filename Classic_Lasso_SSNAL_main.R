@@ -27,7 +27,8 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
   Ax <- A%*%x
   
   obj1 <- 0.5 * norm(Ax - borg, "2")^2 + lambdaorg*norm(x) + orgojbconst
-  obj2 <- -(0.5*(norm(xi,"2")^2)+t(borg) %*% xi) + orgojbconst
+  # obj2 <- -(0.5*(norm(xi,"2")^2)+t(borg) %*% xi) + orgojbconst
+  obj2 <- -(0.5*(norm(xi,"2")^2)+ eigenMapMatMult(t(borg),xi,8)) + orgojbconst
   
   #return(rescale)
   #return(c(obj1,obj2))
@@ -310,20 +311,20 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       print(norm(grad,"2"))
       
       if (Ascaleyes) {
-        etaorg <- norm(grad + proj_inf(eigenMapMatMult(dscale * x, bscale, 8)- grad, lambdaorg)$y, "2")
-        # etaorg <- norm(grad + proj_inf(dscale * x %*% bscale - grad, lambdaorg)$y, "2")
+        # etaorg <- norm(grad + proj_inf(eigenMapMatMult(dscale * x, bscale, 8)- grad, lambdaorg)$y, "2")
+        etaorg <- norm(grad + proj_inf(dscale * x %*% bscale - grad, lambdaorg)$y, "2")
         
         print("######")
         print("Nearing the end")
         print("######")
         
-        eta <- etaorg / (1 + norm(grad,"2")+norm(eigenMapMatMult((dscale * x), bscale, 8),"2"))
-        # eta <- etaorg / (1 + norm(grad,"2")+norm(dscale * x %*% bscale,"2"))
+        # eta <- etaorg / (1 + norm(grad,"2")+norm(eigenMapMatMult((dscale * x), bscale, 8),"2"))
+        eta <- etaorg / (1 + norm(grad,"2")+norm(dscale * x %*% bscale,"2"))
       }
       else {
         etaorg <- norm(grad + projinf(x %*% bscale - grad, lambdaorg),"2")
-        # eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale,"2"))
-        eta <- etaorg / (1 + norm(grad, "2") + norm(eigenMapMatMult(x,bscale,8),"2"))
+        eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale,"2"))
+        # eta <- etaorg / (1 + norm(grad, "2") + norm(eigenMapMatMult(x,bscale,8),"2"))
       }
       if (eta < stoptol) {
         breakyes <- 1
@@ -337,8 +338,8 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     if (printyes) {
       objscale <- bscale * cscale
       primobj <- objscale * (0.5 * norm(Rp1, "2")^2 + norm(ld * x,"1")) + orgojbconst
-      # dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + t(b)%*% xi) + orgojbconst
-      dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + eigenMapMatMult(t(b), xi, 8)) + orgojbconst
+      dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + t(b)%*% xi) + orgojbconst
+      # dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + eigenMapMatMult(t(b), xi, 8)) + orgojbconst
       relgap <- (primobj - dualobj)/(1+abs(primobj) + abs(dualobj))
       # ttime <- measure time
     }

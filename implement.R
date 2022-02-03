@@ -35,7 +35,7 @@ eigs_AtA <- eigs_sym(AtA,1) #instant
 #30secs
 
 A <- data$A
-At <- t(data$A)
+At <- transCpp(data$A)
 b <- data$b
 # Rprof(NULL)
 # summaryRprof()
