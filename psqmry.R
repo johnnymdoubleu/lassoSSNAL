@@ -1,10 +1,12 @@
-psqmr <- function(matvec, A, b, par, x0, Ax0){
+psqmry <- function(matvec, A, b, par, x0=NULL, Ax0=NULL){
   
   N <- length(b)
   maxit <- max(5000, sqrt(N))
   tol <- 1e-6 * norm(b, "2")
   stagnate_check <- 20
   miniter <- 0
+  
+  #print(tol)
   
   # nargin <- length(as.list(match.call()))-1
   # if(nargin < 5){
@@ -19,12 +21,12 @@ psqmr <- function(matvec, A, b, par, x0, Ax0){
   if ("minitpsqmr" %in% names(par)){miniter <- par$minitpsqmr}
   
   solve_ok <- 1
-  printlevel <- FALSE
-  
-  solve.ok <- 1
   printlevel <- 0
-
+  
   x <- x0
+  
+  #print(norm(x,"2"))
+  
   if (norm(x,"2") > 0){
     if (!is.null(Ax0)){
       Ax0 <- feval(matvec, x0, par, A)
@@ -39,10 +41,18 @@ psqmr <- function(matvec, A, b, par, x0, Ax0){
   resnrm <- err
   minres <- err
   
+  #print(err)
   ##
   q <- precondfun(par,r)
+  
+  #print(sum(q))
+  
   tau_old <- norm(q,"2")
   rho_old <- as.numeric(t(r) %*% q) #might use eigenTransMatMult()
+  
+  #print(tau_old)
+  #print(rho_old)
+  
   theta_old <- 0
   d <- matrix(0,N,1)
   res <- r
@@ -53,8 +63,14 @@ psqmr <- function(matvec, A, b, par, x0, Ax0){
   ##
   tiny <- 1e-30
   for (iter in 1:maxit){
+    #print(dim(A))
+    
     Aq <- feval(matvec, q, par, A)
-    sigma <- as.numeric(t(q) %*% Aq) #might use eigenTransMatMult()
+    sigma <- as.numeric(eigenMapMatMult(t(q), Aq,4))
+    #print(matvec)
+    #print(sigma)
+    #print(sum(Aq))
+    
     if (abs(sigma) < tiny){
       solve_ok <- 2
       if (printlevel) cat('s1')
@@ -67,10 +83,10 @@ psqmr <- function(matvec, A, b, par, x0, Ax0){
     
     ##
     theta <- norm(u, "2")/tau_old
-    c <- 1/sqrt(1+theta^2)
-    tau <- tau_old*theta*c
-    gam <- (c^2*theta_old^2)
-    eta <- c^2*alpha
+    c <- 1/sqrt(1 + theta^2)
+    tau <- tau_old * theta * c
+    gam <- (c^2 * theta_old^2)
+    eta <- c^2 * alpha
     d <- gam*d + eta*q
     x <- x + d
     ##-------------stopping conditions---------
@@ -81,7 +97,7 @@ psqmr <- function(matvec, A, b, par, x0, Ax0){
     if (err < minres) minres <- err
     if ((err < tol) && (iter > miniter) && (t(b) %*% x > 0)) break
     if ((iter > stagnate_check) && (iter > 10)){
-      ratio = resnrm[(iter-9):(iter+1)]/resnrm[(iter-10):iter]
+      ratio <- resnrm[(iter-9):(iter+1)]/resnrm[(iter-10):iter]
       if ((min(ratio) > 0.997) && (max(ratio) < 1.003)){
         if (printlevel) cat('s')
         solve_ok <- -1
@@ -94,8 +110,8 @@ psqmr <- function(matvec, A, b, par, x0, Ax0){
       cat('s2')
       break
     }else{
-      rho <- as.numeric(t(r) %*% u) #possible use of eigenTransMatMult()
-      beta <- rho/rho_old
+      rho <- as.numeric(eigenMapMatMult(t(r),u, 4)) #possible use of eigenTransMatMult()
+      beta <- rho / rho_old
       q <- u + beta*q
     }
     rho_old <- rho
@@ -107,7 +123,7 @@ psqmr <- function(matvec, A, b, par, x0, Ax0){
     if (printlevel) cat(' ')
   }
   
-  return (list("x"=x, "Ax"=Ax, "resnrm"=resnrm,"solve_ok"=solve_ok))
+  return (list("x"=x,"resnrm"=resnrm,"solve_ok"=solve_ok))
 }
 
 feval <- function(file.name, ...){
@@ -147,20 +163,4 @@ precondfun <- function(par,r){
   }
   
   return(q)
-}
-
-vecMultiply = function(ff,x){
-  
-  Z = ff$Z
-  ZT = ff$ZT
-  y = ff$y
-  const = ff$const
-  d = length(x) - 1
-  w = x[1:d]; beta = x[d+1]
-  tmp = as.matrix(ZT %*% w) + beta*y
-  Aq = matrix(0,d+1,1)
-  Aq[1:d] = as.matrix(Z %*% tmp) + const*w
-  Aq[d+1] = t(y) %*% tmp
-  
-  return (Aq)
 }

@@ -44,14 +44,18 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
     else if (Ascale == 2){
       dscale <- 1 / sqrt(colSums(A*A))
     }
+    
+    # print(dscale)
     #readline("Hello")
     
     #A <- A %*% diag(dscale,n,n)
     A <- as.matrix(A%*%Diagonal(x=dscale))
+    # A <- eigenVecMatMult(A, Diagonal(x=dscale), 4)
+    # A <- eigenMapMatMult(A, as.matrix(Diagonal(x=dscale)), 4)
     Ascaleyes <- 1
     #print out the time taken
   }
-
+  
   if(is.null(x) | is.null(xi) | is.null(y)){
     x <- matrix(0,n,1)
     xi <- matrix(0,m,1)
@@ -77,88 +81,106 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
                   rescale = rescale,
                   stoptol = stoptol
   )
-  if("Sigma" %in% names(options)) parmain$Sigma = options$Sigma
+  if("Sigma" %in% names(options)) parmain$Sigma <- options$Sigma
   
-  #DBUGGING 
-  # return(parmain)
+  #DBUGGING return(parmain)
   # obj_main,y,xi,x,info_main,runhist <-  Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lambda,parmain,y,xi,x)
-  # return(list(x,xi,y))
-  rescale <- Classic_Lasso_SSNAL_main(A,b,lambda,parmain,y,xi,x)
-  return(rescale)
+  #return(list(x,xi,y))
+  #return(Classic_Lasso_SSNAL_main(A,Ainput,b,lambda,parmain,y,xi,x))
+  clsmo <- Classic_Lasso_SSNAL_main(A,Ainput,b,lambda,parmain,y,xi,x)
+  
+  obj_main <- clsmo$obj
+  y <- clsmo$y
+  xi <- clsmo$xi
+  x <- clsmo$x
+  info_main <- clsmo$info
+  runhist <- clsmo$runhist
   
   iter <- info_main$iter
   bscale <- info_main$bscale
   cscale <- info_main$cscale
   Ax <- info_main$Ax
-  ttime <- info_main$ttime
+  #ttime <- info_main$ttime
   msg <- info_main$msg
   
   if (iter == maxiter){
     msg <- "Maximum iteration reached"
   }
+  
   xi <- xi * sqrt(bscale * cscale)
-  Atxi <- t(A) %*% xi
-  y <- y %*% cscale
-  x <- x %*% bscale
+  # Atxi <- t(Ainput) %*% xi
+  Ainputtrans <- t(Ainput)
+  Atxi <- eigenMapMatMult(Ainputtrans, xi, 4)
+  y <- y * cscale
+  x <- x * bscale
   if (Ascaleyes) {
     x <- dscale * x
-    y <- dscale * y
+    y <- dscale / y
   }
   Rd <- Atxi + y
   dualfeasorg <- norm(Rd, "2")/ (1 + norm(y,"2"))
-  Ax <- Ax %*% sqrt(bscale * cscale)
+  Ax <- Ax * sqrt(bscale * cscale)
   Rp <- Ax - b + xi
   primfeasorg <- norm(Rp, "2")/ (1+norm(b,"2"))
-  primobj <- 0.5 * norm(Ax-b,"2")^2 + t(b) %*% xi + orgojbconst
+  primobj <- 0.5 * norm(Ax-b,"2")^2 + lambda*norm(x,"1") + orgojbconst
   dualobj <- -0.5 * norm(xi,"2")^2 + t(b) %*% xi + orgojbconst
   
   relgap <- (primobj-dualobj)/(1+abs(primobj)+abs(dualobj))
   obj <- c(primobj, dualobj)
-  grad <- A %*% (Ax-b)
-  etaorg <- norm(grad + projinf(x- grad, lambda), "2")
+  # grad <- t(Ainput) %*% (Ax-b)
+  grad <- eigenMapMatMult(Ainputtrans, (Ax-b), 4)
+  etaorg <- norm(grad + proj_inf(x- grad, lambda)$y, "2")
   eta <- etaorg / (1+norm(grad,"2")+ norm(x, "2"))
   
-  runhist <- list(m = m,
-                  n=n,
-                  iter = iter,
-                  totaltime = ttime,
-                  primobjorg = primobj,
-                  dualobjorg = dualobj,
-                  maxfeas = max(c(dualfeasorg, primfeasorg)),
-                  eta = eta,
-                  etaorg = etaorg)
+  #runhist <- list(m = m,
+  #                n=n,
+  #                iter = iter,
+  #                totaltime = ttime,
+  #                primobjorg = primobj,
+  #                dualobjorg = dualobj,
+  #                maxfeas = max(c(dualfeasorg, primfeasorg)),
+  #                eta = eta,
+  #                etaorg = etaorg)
+  #runhist <- list()
   
   info <- list(m = m,
                n=n,
-               minx = min(mix(x)),
+               minx = min(min(x)),
                max = max(max(x)),
                relgap = relgap,
                iter = iter,
-               totaltime = ttime,
+               #            totaltime = ttime,
                eta = eta,
                etaorg = etaorg,
                obj = obj,
                maxfeas = max(c(dualfeasorg, primfeasorg)),
-               cnt_Amap = sum(runhist$cnt_Amap),
-               cnt_ATap = sum(runhist$cnt_ATmap),
-               cnt_pAATmap = sum(runhist$cnt_pAATmap),
-               cnt_fAATmap = sum(runhist$cnt_fAATmap),
-               nnz = findnnz(x, 0.999),
+               #           cnt_Amap = sum(runhist$cnt_Amap),
+               #           cnt_ATap = sum(runhist$cnt_ATmap),
+               #           cnt_pAATmap = sum(runhist$cnt_pAATmap),
+               #           cnt_fAATmap = sum(runhist$cnt_fAATmap),
+               #           nnz = findnnz(x, 0.999),
                x = x
   )
-  # if (printyes){
-  #   if (is.null(msg)){
-  #     printf('\n %d', msg)
-  #   }
-  #   printf('\n  number iter = %2.0d',iter)
-  #   printf('\n  time = %3.2d',ttime)
-  #   printf('\n  time per iter = %5.4d', ttime/iter)
-  #   printf('\n  primobj = %9.8d, dualobj = %9.8d, relgap = %3.2d',primobj,dualobj, relgap)
-  #   printf('\n  primfeasorg = %3.2d, dualfeasorg = %3.2d',primfeasorg, dualfeasorg)
-  #   printf('\n  eta = %3.2, etaorg = %3.2', eta, etaorg)
-  #   printf('\n  min(X) = %3.2d, max(X) = %3.2d', info$minx,info$maxx)
-  #   printf('\n  Amap cnt = %3d, ATmap cnt = %3d, partial AATmap cnt = %3d, full AATmap cnt = %3d', info$cnt_Amap, info$cnt_ATmap, info$cnt_pAATmap, info$cnt_fAATmap)
-  #   printf('\n  number of nonzeros in x (0.999) = %3.0d',findnnz(x,0.999))
-  # }
+  #if (printyes){
+  #  if (is.null(msg)){
+  #    printf('\n %d', msg)
+  #  }
+  #  printf('\n  number iter = %2.0d',iter)
+  #  printf('\n  time = %3.2d',ttime)
+  #  printf('\n  time per iter = %5.4d', ttime/iter)
+  #  printf('\n  primobj = %9.8d, dualobj = %9.8d, relgap = %3.2d',primobj,dualobj, relgap)
+  #  printf('\n  primfeasorg = %3.2d, dualfeasorg = %3.2d',primfeasorg, dualfeasorg)
+  #  printf('\n  eta = %3.2, etaorg = %3.2', eta, etaorg)
+  #  printf('\n  min(X) = %3.2d, max(X) = %3.2d', info$minx,info$maxx)
+  #  printf('\n  Amap cnt = %3d, ATmap cnt = %3d, partial AATmap cnt = %3d, full AATmap cnt = %3d', info$cnt_Amap, info$cnt_ATmap, info$cnt_pAATmap, info$cnt_fAATmap)
+  #  printf('\n  number of nonzeros in x (0.999) = %3.0d',findnnz(x,0.999))
+  #}
   
+  
+  output <- list(obj=obj,
+                 y=y,
+                 xi=xi,
+                 x=x,
+                 info=info,
+                 runhist=runhist)
 }
