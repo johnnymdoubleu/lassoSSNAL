@@ -25,7 +25,11 @@ Rprof()
 data <- read.mat("UCIdata/abalone_scale_expanded7.mat")
 
 # newA <- Matrix(data$A, sparse = TRUE)
-AtA <- eigenTransMapMatMult(data$A, n_cores=8)
+A <- data$A
+At <- t(data$A)
+b <- data$b
+AtA <- eigenMapMatMult(At, A, 8)
+# AtA <- eigenTransMapMatMult(data$A, n_cores=8)
 # AtA <- crossCpp(data$A)
 
 
@@ -34,9 +38,7 @@ eigs_AtA <- eigs_sym(AtA,1) #instant
 
 #30secs
 
-A <- data$A
-At <- transCpp(data$A)
-b <- data$b
+
 # Rprof(NULL)
 # summaryRprof()
 
