@@ -3,9 +3,9 @@ matvec_Classic_Lasso <- function(y, par, AP){
   #Ay <- y + par$sigma * (AP %*% temp)
   #print('--')
   #print(dim(AP))
-  
-  temp <- eigenMapMatMult(t(AP),y,8)
-  Ay <- y + par$sigma * eigenMapMatMult(AP,temp,8)
+  # temp <- crossprod(AP, y)
+  temp <- eigenMapMatMult(t(AP),y,4)
+  Ay <- y + par$sigma * eigenMapMatMult(AP,temp,4)
   return(Ay)
 }
 

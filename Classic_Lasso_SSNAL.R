@@ -124,6 +124,7 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   primfeasorg <- norm(Rp, "2")/ (1+norm(b,"2"))
   primobj <- 0.5 * norm(Ax-b,"2")^2 + lambda*norm(x,"1") + orgojbconst
   dualobj <- -0.5 * norm(xi,"2")^2 + t(b) %*% xi + orgojbconst
+  # dualobj <- -0.5 * norm(xi,"2")^2 + crossprod(b,xi) + orgojbconst
   
   relgap <- (primobj-dualobj)/(1+abs(primobj)+abs(dualobj))
   obj <- c(primobj, dualobj)

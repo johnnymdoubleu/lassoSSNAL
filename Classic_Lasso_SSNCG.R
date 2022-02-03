@@ -44,7 +44,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
   ytmp <- yinput - y
   Atxi <- Atxi0
   xi <- xi0
-  Ly <- t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2
+  # Ly <- t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2
+  Ly <- crossprod(b, xi) - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2
   
   runhist<-list()
   
@@ -66,8 +67,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     normRd <- norm(Rdz,"2")
     #%Ly = b'*xi - 0.5*norm(xi)^2 - 0.5*sig*norm(ytmp)^2;
     #  msigAytmp = -sig*Amap(ytmp);
-    msigAytmp <- -sig * A %*% ytmp
-    # msigAytmp <- -sig * eigenMapMatMult(A, ytmp, 4)
+    # msigAytmp <- -sig * A %*% ytmp
+    msigAytmp <- -sig * eigenMapMatMult(A, ytmp, 4)
     #return(msigAytmp)
     #return(normRd)
     GradLxi <- -(xi - b + msigAytmp)
@@ -180,7 +181,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     
     
     
-    Atdxi <- t(A) %*% dxi
+    # Atdxi <- t(A) %*% dxi
+    Atdxi <- eigenMapMatMult(t(A), dxi, 4)
     cnt_ATmap <- cnt_ATmap + 1
     iterpsqmr <- length(resnrm)-1
     

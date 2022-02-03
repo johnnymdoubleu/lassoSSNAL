@@ -57,7 +57,7 @@ linsyssolve <- function(Ainput, rhs, par){
   }
   else if(solver == "d_direct"){
     AP <- Ainput$A[,pp]
-    sigAPAt <- par$sigma*(eigenTransMapMatMult(AP, 8))
+    sigAPAt <- par$sigma*(eigenTransMapMatMult(AP, 4))
     if (m <= 1500){
       M <- diag(m) + sigAPAt
       xi <- mldivide(M, rhs) # same as backslash operator in Matlab
@@ -80,14 +80,14 @@ linsyssolve <- function(Ainput, rhs, par){
     APT <- t(AP)
     # rhstmp <- eigenVecMatMult(APT, rhs, 4)
     # rhstmp <- APT %*% rhs
-    rhstmp <- eigenMapMatMult(APT, rhs, 8)
+    rhstmp <- eigenMapMatMult(APT, rhs, 4)
     
     #return(dim(rhstmp))
     #return(sum(rhs))
     #return(length(rhs))
     
     # PAtAP <- APT %*% AP
-    PAtAP <- eigenTransMapMatMult(AP, 8)
+    PAtAP <- eigenMapMatMult(APT, AP, 4)
     if (sp <= 1500) {
       M <- diag(sp)/par$sigma + PAtAP
       if(0 %in% dim(M)) {
