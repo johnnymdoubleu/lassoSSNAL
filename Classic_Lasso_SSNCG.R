@@ -318,7 +318,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       
       if (breakyes > 0) {
         Rdz =  Atxi + y
-        msigAytmp = -sig*A %*% ytmp
+        # msigAytmp = -sig*A %*% ytmp
+        msigAytmp <- eigenMapMatMult(-sig*A, ytmp, 4)
         cnt_Amap = cnt_Amap + 1
         #%normRd = norm(Rdz);
         #if printsub
