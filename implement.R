@@ -19,16 +19,16 @@ sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 # Rprof()
 eps <- 2.220446e-16 # Copy the MATLAB eps essentially
-
-#30secs
 # data <- readMat("UCIdata/abalone_scale_expanded7.mat")
-# data <- read.mat("UCIdata/abalone_scale_expanded7.mat")
-# data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")
+#30secs
+
+# data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #working
+# data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #working
 # data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")
-# data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")
+data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")
 # data <- read.mat("UCIdata/housing_scale_expanded7.mat")
 # data <- read.mat("UCIdata/triazines_scale_expanded4.mat")
-data <- read.mat("UCIdata/mpg_scale_expanded7.mat")
+# data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #working
 
 
 A <- data$A
@@ -52,7 +52,7 @@ opts$Ascale <- 1
 
 #as.numeric(strsplit(format(Sys.time(), "%Y %m %d %H %M %S")," ")[[1]])/rep(1000,6)
 Rprof()
-clo <- Classic_Lasso_SSNAL(A,b,n,rho,opts)
+# clo <- Classic_Lasso_SSNAL(A,b,n,rho,opts)
 Rprof(NULL)
 summaryRprof()
 print("-------------------------")
