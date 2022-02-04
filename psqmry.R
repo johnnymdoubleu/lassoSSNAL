@@ -21,15 +21,16 @@ psqmry <- function(matvec, A, b, par, x0=NULL, Ax0=NULL){
   if ("minitpsqmr" %in% names(par)){miniter <- par$minitpsqmr}
   
   solve_ok <- 1
-  printlevel <- 0
   
+  printlevel <- 0
+
   x <- x0
   
   #print(norm(x,"2"))
   
   if (norm(x,"2") > 0){
     if (!is.null(Ax0)){
-      Ax0 <- feval(matvec, x0, par, A)
+      Ax0 <- feval(matvec, x0, par$sigma, A)
     }
     Aq <- Ax0
   }
@@ -65,8 +66,8 @@ psqmry <- function(matvec, A, b, par, x0=NULL, Ax0=NULL){
   for (iter in 1:maxit){
     #print(dim(A))
     
-    Aq <- feval(matvec, q, par, A)
-    sigma <- as.numeric(eigenMapMatMult(t(q), Aq,4))
+    Aq <- feval(matvec, q, par$sigma, A)
+    sigma <- as.numeric(t(q) %*% Aq) #might use eigenTransMatMult()
     #print(matvec)
     #print(sigma)
     #print(sum(Aq))
@@ -83,10 +84,10 @@ psqmry <- function(matvec, A, b, par, x0=NULL, Ax0=NULL){
     
     ##
     theta <- norm(u, "2")/tau_old
-    c <- 1/sqrt(1 + theta^2)
-    tau <- tau_old * theta * c
-    gam <- (c^2 * theta_old^2)
-    eta <- c^2 * alpha
+    c <- 1/sqrt(1+theta^2)
+    tau <- tau_old*theta*c
+    gam <- (c^2*theta_old^2)
+    eta <- c^2*alpha
     d <- gam*d + eta*q
     x <- x + d
     ##-------------stopping conditions---------
@@ -97,7 +98,7 @@ psqmry <- function(matvec, A, b, par, x0=NULL, Ax0=NULL){
     if (err < minres) minres <- err
     if ((err < tol) && (iter > miniter) && (t(b) %*% x > 0)) break
     if ((iter > stagnate_check) && (iter > 10)){
-      ratio <- resnrm[(iter-9):(iter+1)]/resnrm[(iter-10):iter]
+      ratio = resnrm[(iter-9):(iter+1)]/resnrm[(iter-10):iter]
       if ((min(ratio) > 0.997) && (max(ratio) < 1.003)){
         if (printlevel) cat('s')
         solve_ok <- -1
@@ -110,8 +111,8 @@ psqmry <- function(matvec, A, b, par, x0=NULL, Ax0=NULL){
       cat('s2')
       break
     }else{
-      rho <- as.numeric(eigenMapMatMult(t(r),u, 4)) #possible use of eigenTransMatMult()
-      beta <- rho / rho_old
+      rho <- as.numeric(t(r) %*% u) #possible use of eigenTransMatMult()
+      beta <- rho/rho_old
       q <- u + beta*q
     }
     rho_old <- rho
@@ -126,18 +127,9 @@ psqmry <- function(matvec, A, b, par, x0=NULL, Ax0=NULL){
   return (list("x"=x,"resnrm"=resnrm,"solve_ok"=solve_ok))
 }
 
-feval <- function(file.name, ...){
-  do.call(file.name,list(...))
-}
 
-fnorm = function(x){
-  if (typeof(x) == "S4"){
-    xentry = x@ra
-    return (sqrt(sum(xentry * xentry)))
-  }else{
-    return (sqrt(sum(x*x)))
-  }
-  
+feval <- function(file.name, ...){
+  return(do.call(file.name,list(...)))
 }
 
 precondfun <- function(par,r){

@@ -52,12 +52,12 @@ linsyssolve <- function(Ainput, rhs, par){
       return(output)
     }
     else {
-      # c(xi,psq, resnrm, solve_ok) <- psqmry('matvec_classicLasso_Amap',Ainput, rhs, par)
+      c(xi,psq, resnrm, solve_ok) <- psqmry('matvec_classicLasso_Amap',Ainput, rhs, par)
     }
   }
   else if(solver == "d_direct"){
     AP <- Ainput$A[,pp]
-    sigAPAt <- par$sigma*(eigenTransMapMatMult(AP, 4))
+    sigAPAt <- par$sigma*(AP%*%t(AP))
     if (m <= 1500){
       M <- diag(m) + sigAPAt
       xi <- mldivide(M, rhs) # same as backslash operator in Matlab
@@ -78,7 +78,6 @@ linsyssolve <- function(Ainput, rhs, par){
     #print(par$rr)
     #AP <- A[,(pp+1)]
     APT <- t(AP)
-    # rhstmp <- eigenVecMatMult(APT, rhs, 4)
     # rhstmp <- APT %*% rhs
     rhstmp <- eigenMapMatMult(APT, rhs, 4)
     
@@ -87,7 +86,7 @@ linsyssolve <- function(Ainput, rhs, par){
     #return(length(rhs))
     
     # PAtAP <- APT %*% AP
-    PAtAP <- eigenMapMatMult(APT, AP, 4)
+    PAtAP <- eigenMapMatMult(APT, AP,4)
     if (sp <= 1500) {
       M <- diag(sp)/par$sigma + PAtAP
       if(0 %in% dim(M)) {
@@ -104,8 +103,7 @@ linsyssolve <- function(Ainput, rhs, par){
     }
     resnrm <-0
     solve_ok <- 1
-    xi <- rhs - AP %*% tmp
-    # xi <- rhs - eigenMapMatMult(AP, tmp, 4)
+    xi <- rhs - AP %*%tmp
     #print("here")
   }
   

@@ -1,11 +1,11 @@
-matvec_Classic_Lasso <- function(y, par, AP){
+matvec_Classic_Lasso <- function(y, sigma, AP){
   #temp <- t(AP) %*% y
   #Ay <- y + par$sigma * (AP %*% temp)
   #print('--')
   #print(dim(AP))
-  # temp <- crossprod(AP, y)
+  
   temp <- eigenMapMatMult(t(AP),y,4)
-  Ay <- y + par$sigma * eigenMapMatMult(AP,temp,4)
+  Ay <- y + sigma * eigenMapMatMult(AP,temp,4)
   return(Ay)
 }
 

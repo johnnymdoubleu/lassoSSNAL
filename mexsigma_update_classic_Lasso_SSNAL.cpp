@@ -12,7 +12,7 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector mexsigma_update(double sigma, double sigmamax, double sigmamin, double prim_win, double dual_win,
-                              int iter, int inner_breakyes) {
+                               int iter, int inner_breakyes) {
   /****** main body ****************/ 
   int sigma_update_iter;
   double sigmascale = 5.0;

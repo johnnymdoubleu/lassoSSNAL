@@ -24,14 +24,13 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
   borg <- b
   normborg <- 1 + norm(borg,"2")
   # Atxi <- t(A)%*%xi
-  Atxi <- eigenMapMatMult(t(A),xi,4)
+  Atxi <- eigenMapMatMult(t(A), xi, 4)
   # Ax <- A%*%x
-  Ax <- eigenMapMatMult(A,x,4)
+  Ax <- eigenMapMatMult(A, x, 4)
   
   obj1 <- 0.5 * norm(Ax - borg, "2")^2 + lambdaorg*norm(x) + orgojbconst
-  # obj2 <- -(0.5*(norm(xi,"2")^2)+t(borg) %*% xi) + orgojbconst
-  obj2 <- -(0.5*(norm(xi,"2")^2)+ eigenMapMatMult(t(borg),xi,4)) + orgojbconst
-  # obj2 <- -(0.5*(norm(xi,"2")^2)+ crossprod(borg,xi)) + orgojbconst
+  obj2 <- -(0.5*(norm(xi,"2")^2)+t(borg) %*% xi) + orgojbconst
+  
   #return(rescale)
   #return(c(obj1,obj2))
   #return(scale)
@@ -43,7 +42,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     #Amap <- function(x) Amap0(x*sqrt(bscale/cscale))
     #ATmap <- function(x) ATmap0(x*sqrt(bscale/cscale))
     A<-A*sqrt(bscale/cscale)
-    if (existA){ A <- A*sqrt(bscale/cscale)}
+    if (existA){ A<-A*sqrt(bscale/cscale)}
     lambda <- lambda / cscale
     ld <- ld/cscale
     x <- x/bscale
@@ -221,16 +220,16 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     runhist_NCG <- clssncgout$runhist
     info_NCG <- clssncgout$info
     
-    # print(sum(y))
-    # print(sum(Atxi))
-    # print(sum(xi))
+    print(sum(y))
+    print(sum(Atxi))
+    print(sum(xi))
     print(info_NCG$breakyes)
     
     if (info_NCG$breakyes < 0){
       parNCG$tolconst <- max(parNCG$tolconst/1.06, 1e-3)
     }
     
-    cat("parncg_tolconst =",parNCG$tolconst,"\n")
+    cat("parncg_tolconst=",parNCG$tolconst,"\n")
     #return()
     
     Rd <- Atxi + y
@@ -240,23 +239,23 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     normRd <- norm(Rd, "2")
     normy <- norm(y, "2")
     
-    cat("normRd =",normRd,"\n")
-    cat("normy =",normy,"\n")
+    cat("normRd=",normRd,"\n")
+    cat("normy=",normy,"\n")
     #return()
     
     dualfeas <- normRd / (1+normy)
     
-    cat("dualfeas =",dualfeas,"\n")
+    cat("dualfeas=",dualfeas,"\n")
     #return()
     
     if (Ascaleyes){
-      dualfeasorg <- norm(Rd / dscale, "2") * cscale / (1 + norm(y / dscale,"2") * cscale)
+      dualfeasorg <- norm(Rd / dscale, "2")*cscale / (1+norm(y/dscale,"2")*cscale)
     }
     else {
-      dualfeasorg <- normRd * cscale / (1 + normy * cscale)
+      dualfeasorg <- normRd * cscale / (1+normy * cscale)
     }
     
-    cat("dualfeasorg =",dualfeasorg,"\n")
+    cat("dualfeasorg=",dualfeasorg,"\n")
     #return()
     
     Rp1 <- Ax - b
@@ -267,12 +266,12 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     maxfeas <- max(primfeas, dualfeas)
     maxfeasorg <- max(primfeasorg, dualfeasorg)
     
-    cat("normRp =",normRp,"\n")
-    cat("primfeas =",primfeas,"\n")
-    cat("primfeasorg =",primfeasorg,"\n")
-    cat("maxfeas =",maxfeas,"\n")
-    cat("maxfeasorg =",maxfeasorg,"\n")
-    cat("printyes =",printyes,"\n")
+    cat("normRp=",normRp,"\n")
+    cat("primfeas=",primfeas,"\n")
+    cat("primfeasorg=",primfeasorg,"\n")
+    cat("maxfeas=",maxfeas,"\n")
+    cat("maxfeasorg=",maxfeasorg,"\n")
+    cat("printyes=",printyes,"\n")
     #return()
     
     
@@ -298,10 +297,18 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     #   I believe cascading numerical imprecisions throughout the algorithm
     #   prohibit doing any better, and appears intractable.
     
+    
+    
+    
+    
+    
+    
+    
+    
     if (max(primfeasorg, dualfeasorg) < 500 * max(1e-6, stoptol)) {
       #grad <- ATmap0(Rp1 * sqrt(bscale * cscale))
       # grad <- t(orig_A) %*% (Rp1 * sqrt(bscale*cscale))
-      grad <- eigenMapMatMult(t(orig_A), (Rp1 * sqrt(bscale*cscale)),4)
+      grad <- eigenMapMatMult(t(orig_A), (Rp1 * sqrt(bscale * cscale)), 4)
       
       cat("rtbc=",sqrt(bscale*cscale),"\n")
       cat("Rp1norm=",norm(Rp1,"2"),"\n")
@@ -313,45 +320,43 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       print(norm(grad,"2"))
       
       if (Ascaleyes) {
-        etaorg <- norm(grad + proj_inf(eigenMapMatMult(dscale * x, bscale, 4)- grad, lambdaorg)$y, "2")
-        # etaorg <- norm(grad + proj_inf(dscale * x %*% bscale - grad, lambdaorg)$y, "2")
+        etaorg <- norm(grad + proj_inf(dscale * x * bscale - grad, lambdaorg)$y, "2")
+        eta <- etaorg / (1 + norm(grad,"2")+norm(x*bscale,"2"))
         
         print("######")
         print("Nearing the end")
         print("######")
+        # cat("etaorg=",etaorg,"\n")
+        # cat("etaorg=",eta,"\n")
         
-        eta <- etaorg / (1 + norm(grad,"2")+norm(eigenMapMatMult((dscale * x), bscale, 4),"2"))
-        # eta <- etaorg / (1 + norm(grad,"2")+norm(dscale * x %*% bscale,"2"))
       }
       else {
-        xbscale <- eigenMapMatMult(x, bscale, 4)
-        etaorg <- norm(grad + projinf(xbscale - grad, lambdaorg),"2")
-        # eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale,"2"))
-        eta <- etaorg / (1 + norm(grad, "2") + norm(xbscale,"2"))
+        etaorg <- norm(grad + projinf(x %*% bscale -grad, lambdaorg, "2"))
+        eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale,"2"))
       }
+      cat("number of iteration = ", iter, "\n")
+      cat("etaorg=",etaorg,"\n")
+      cat("eta=",eta,"\n")
+      
       if (eta < stoptol) {
         breakyes <- 1
         msg <- 'converged'
+        cat(msg)
       }
-      cat("eta =",eta,"\n")
-      cat("etaorg =",etaorg,"\n")
-      cat("number of Iteration =", iter, "\n")
     }
     
     
     if (printyes) {
       objscale <- bscale * cscale
-      primobj <- objscale * (0.5 * norm(Rp1, "2")^2 + norm(ld * x,"1")) + orgojbconst
-      # dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + t(b)%*% xi) + orgojbconst
-      dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + crossprod(b, xi)) + orgojbconst
-      # dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + eigenMapMatMult(t(b), xi, 4)) + orgojbconst
+      primobj <- objscale * (0.5 * norm(Rp1,"2")^2 + norm(ld * x,"1")) + orgojbconst
+      dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + t(b) %*% xi) + orgojbconst
       relgap <- (primobj - dualobj)/(1+abs(primobj) + abs(dualobj))
       # ttime <- measure time
     }
     
-    cat("primobj =",primobj,"\n")
-    cat("dualobj =",dualobj,"\n")
-    cat("relgap =",relgap,"\n")
+    cat("primobj=",primobj,"\n")
+    cat("dualobj=",dualobj,"\n")
+    cat("relgap=",relgap,"\n")
     #return()
     
     #printf('\n %5.0d| [%3.2e %3.2e] [%3.2e %3.2e]  %- 3.2e| %- 5.4e %- 5.4e |',iter,primfeas,dualfeas,primfeasorg,dualfeasorg,relgap,primobj,dualobj)
@@ -379,7 +384,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     
     #return(runhist)
     
-    cat("breakyes =",breakyes,"\n")
+    cat("breakyes=",breakyes,"\n")
     #return()
     
     if (breakyes > 0) {
@@ -396,8 +401,8 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       dual_win <- dual_win + 1
     }
     
-    cat("prim_win =",prim_win,"\n")
-    cat("dual_win =",dual_win,"\n")
+    cat("prim_win=",prim_win,"\n")
+    cat("dual_win=",dual_win,"\n")
     
     msuout <- mexsigma_update(sigma, sigmamax, sigmamin, prim_win, dual_win, iter, info_NCG$breakyes)
     
@@ -405,15 +410,35 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     prim_win <- msuout[2]
     dual_win <- msuout[3]
     
-    #       !!!! IMPORTANT !!!!!
     
+    
+    
+    
+    
+    
+    #       !!!! IMPORTANT !!!!!
+      
     #  Comment/uncomment the following "Stop" input command
     #   in both R + MATLAB if you want to manually debug
     #   or supervise the algorithm.
     
     
+    
+    
+    
+    
+    
+    
     #dbgtest <- readline("Stop")
     #if(dbgtest=="die") break
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     #c(sigma, prim_win, dual_win) <- mexsigma_update_classic_Lasso_SSNAL(sigma, sigmamax, sigmamin, prim_win, dual_win, iter, info_NCG$breakyes)

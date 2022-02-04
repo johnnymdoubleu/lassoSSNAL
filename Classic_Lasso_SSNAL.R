@@ -45,17 +45,15 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
       dscale <- 1 / sqrt(colSums(A*A))
     }
     
-    # print(dscale)
+    #print(dscale)
     #readline("Hello")
     
     #A <- A %*% diag(dscale,n,n)
     A <- as.matrix(A%*%Diagonal(x=dscale))
-    # A <- eigenVecMatMult(A, Diagonal(x=dscale), 4)
-    # A <- eigenMapMatMult(A, as.matrix(Diagonal(x=dscale)), 4)
     Ascaleyes <- 1
     #print out the time taken
   }
-  
+
   if(is.null(x) | is.null(xi) | is.null(y)){
     x <- matrix(0,n,1)
     xi <- matrix(0,m,1)
@@ -81,7 +79,7 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
                   rescale = rescale,
                   stoptol = stoptol
   )
-  if("Sigma" %in% names(options)) parmain$Sigma <- options$Sigma
+  if("Sigma" %in% names(options)) parmain$Sigma = options$Sigma
   
   #DBUGGING return(parmain)
   # obj_main,y,xi,x,info_main,runhist <-  Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lambda,parmain,y,xi,x)
@@ -108,9 +106,9 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   }
   
   xi <- xi * sqrt(bscale * cscale)
+  At <- t(Ainput)
   # Atxi <- t(Ainput) %*% xi
-  Ainputtrans <- t(Ainput)
-  Atxi <- eigenMapMatMult(Ainputtrans, xi, 4)
+  Atxi <- eigenMapMatMult(At, xi, 4)
   y <- y * cscale
   x <- x * bscale
   if (Ascaleyes) {
@@ -124,13 +122,12 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   primfeasorg <- norm(Rp, "2")/ (1+norm(b,"2"))
   primobj <- 0.5 * norm(Ax-b,"2")^2 + lambda*norm(x,"1") + orgojbconst
   dualobj <- -0.5 * norm(xi,"2")^2 + t(b) %*% xi + orgojbconst
-  # dualobj <- -0.5 * norm(xi,"2")^2 + crossprod(b,xi) + orgojbconst
   
   relgap <- (primobj-dualobj)/(1+abs(primobj)+abs(dualobj))
   obj <- c(primobj, dualobj)
+  grad <- eigenMapMatMult(At, (Ax-b), 4)
   # grad <- t(Ainput) %*% (Ax-b)
-  grad <- eigenMapMatMult(Ainputtrans, (Ax-b), 4)
-  etaorg <- norm(grad + proj_inf(x- grad, lambda)$y, "2")
+  etaorg <- norm(grad + proj_inf(x - grad, lambda)$y, "2")
   eta <- etaorg / (1+norm(grad,"2")+ norm(x, "2"))
   
   #runhist <- list(m = m,
@@ -150,16 +147,16 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
                max = max(max(x)),
                relgap = relgap,
                iter = iter,
-               #            totaltime = ttime,
+   #            totaltime = ttime,
                eta = eta,
                etaorg = etaorg,
                obj = obj,
                maxfeas = max(c(dualfeasorg, primfeasorg)),
-               #           cnt_Amap = sum(runhist$cnt_Amap),
-               #           cnt_ATap = sum(runhist$cnt_ATmap),
-               #           cnt_pAATmap = sum(runhist$cnt_pAATmap),
-               #           cnt_fAATmap = sum(runhist$cnt_fAATmap),
-               #           nnz = findnnz(x, 0.999),
+    #           cnt_Amap = sum(runhist$cnt_Amap),
+    #           cnt_ATap = sum(runhist$cnt_ATmap),
+    #           cnt_pAATmap = sum(runhist$cnt_pAATmap),
+    #           cnt_fAATmap = sum(runhist$cnt_fAATmap),
+    #           nnz = findnnz(x, 0.999),
                x = x
   )
   #if (printyes){
