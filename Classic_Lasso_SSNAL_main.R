@@ -310,7 +310,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       # grad <- t(orig_A) %*% (Rp1 * sqrt(bscale*cscale))
       grad <- eigenMapMatMult(t(orig_A), (Rp1 * sqrt(bscale * cscale)), 4)
       
-      cat("rtbc=",sqrt(bscale*cscale),"\n")
+      # cat("rtbc=",sqrt(bscale*cscale),"\n")
       cat("Rp1norm=",norm(Rp1,"2"),"\n")
       cat("dscale=",norm(dscale,"2"),"\n")
       cat("lambdaorg=",lambdaorg,"\n")
@@ -320,8 +320,8 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       print(norm(grad,"2"))
       
       if (Ascaleyes) {
-        etaorg <- norm(grad + proj_inf(dscale * x * bscale - grad, lambdaorg)$y, "2")
-        eta <- etaorg / (1 + norm(grad,"2")+norm(x*bscale,"2"))
+        etaorg <- norm(grad + proj_inf((dscale * x) %*% bscale - grad, lambdaorg)$y, "2")
+        eta <- etaorg / (1 + norm(grad, "2")+norm((dscale * x) %*% bscale, "2"))
         
         print("######")
         print("Nearing the end")
@@ -331,8 +331,8 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
         
       }
       else {
-        etaorg <- norm(grad + projinf(x %*% bscale -grad, lambdaorg, "2"))
-        eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale,"2"))
+        etaorg <- norm(grad + projinf(x %*% bscale - grad, lambdaorg, "2"))
+        eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale, "2"))
       }
       cat("number of iteration = ", iter, "\n")
       cat("etaorg=",etaorg,"\n")
@@ -350,7 +350,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       objscale <- bscale * cscale
       primobj <- objscale * (0.5 * norm(Rp1,"2")^2 + norm(ld * x,"1")) + orgojbconst
       dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + t(b) %*% xi) + orgojbconst
-      relgap <- (primobj - dualobj)/(1+abs(primobj) + abs(dualobj))
+      relgap <- (primobj - dualobj)/(1+ abs(primobj) + abs(dualobj))
       # ttime <- measure time
     }
     

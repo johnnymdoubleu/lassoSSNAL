@@ -17,16 +17,17 @@ source("lassoSSNAL/findnnz.R")
 sourceCpp("lassoSSNAL/test.cpp")
 sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
 
-Rprof()
+# Rprof()
 eps <- 2.220446e-16 # Copy the MATLAB eps essentially
 
 #30secs
 # data <- readMat("UCIdata/abalone_scale_expanded7.mat")
 data <- read.mat("UCIdata/abalone_scale_expanded7.mat")
+# data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")
+# data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")
 
 A <- data$A
 At <- t(data$A)
-# AtA <- eigenTransMatMult(data$A, n_cores=4)
 AtA <- eigenMapMatMult(At, A, n_cores=4)
 eigs_AtA <- eigs_sym(AtA,1) #instant
 
@@ -44,13 +45,8 @@ opts$stoptol <- stoptol
 opts$Lip <- Lip
 opts$Ascale <- 1
 
-#2mins
-#test<-Classic_Lasso_SSNAL(A,b,n,rho,opts)
-
 #as.numeric(strsplit(format(Sys.time(), "%Y %m %d %H %M %S")," ")[[1]])/rep(1000,6)
-#A%*%Diagonal(x=test$dscale)
-
-
+Rprof()
 clo <- Classic_Lasso_SSNAL(A,b,n,rho,opts)
 Rprof(NULL)
 summaryRprof()
