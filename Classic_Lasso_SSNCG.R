@@ -71,8 +71,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     #return(normRd)
     GradLxi = -(xi - b + msigAytmp)
     cnt_Amap = cnt_Amap + 1
-    normGradLxi = norm(GradLxi,"2")*sqrt(bscale*cscale)/normborg
-    priminf_sub = normGradLxi
+    normGradLxi <- norm(GradLxi,"2")*sqrt(bscale*cscale)/normborg
+    priminf_sub <- normGradLxi
     
     #return(priminf_sub)
     
@@ -159,7 +159,9 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       const2 = 0.5*const2
     }
     
-    if (dual_ratio > 1.1) const2 = 0.5*const2
+    if (dual_ratio > 1.1) {
+      const2 = 0.5*const2
+    }
     
     tolpsqmr = const2*tolpsqmr
     par$tol = tolpsqmr
@@ -181,6 +183,7 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     
     
     Atdxi = t(A) %*% dxi
+    # Atdxi <- eigenMapMatMult(t(A), dxi, 4)
     cnt_ATmap = cnt_ATmap + 1
     iterpsqmr = length(resnrm)-1
     

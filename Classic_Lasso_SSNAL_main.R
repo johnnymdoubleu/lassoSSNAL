@@ -320,9 +320,10 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       print(norm(grad,"2"))
       
       if (Ascaleyes) {
-        etaorg <- norm(grad + proj_inf((dscale * x) %*% bscale - grad, lambdaorg)$y, "2")
-        eta <- etaorg / (1 + norm(grad, "2")+norm((dscale * x) %*% bscale, "2"))
-        
+        # etaorg <- norm(grad + proj_inf((dscale * x) %*% bscale - grad, lambdaorg)$y, "2")
+        # eta <- etaorg / (1 + norm(grad, "2")+norm((dscale * x) %*% bscale, "2"))
+        etaorg <- norm(grad + proj_inf(eigenMapMatMult((dscale*x), bscale, 4) - grad, lambdaorg)$y, "2")
+        eta <- etaorg / (1 + norm(grad, "2")+norm(eigenMapMatMult((dscale*x), bscale, 4), "2"))
         print("######")
         print("Nearing the end")
         print("######")
@@ -331,8 +332,10 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
         
       }
       else {
-        etaorg <- norm(grad + projinf(x %*% bscale - grad, lambdaorg, "2"))
-        eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale, "2"))
+        # etaorg <- norm(grad + projinf(x %*% bscale - grad, lambdaorg, "2"))
+        # eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale, "2"))
+        etaorg <- norm(grad + projinf(eigenMapMatMult(x, bscale,4) - grad, lambdaorg, "2"))
+        eta <- etaorg / (1 + norm(grad, "2") + norm(eigenMapMatMult(x, bscale,4), "2"))
       }
       cat("number of iteration = ", iter, "\n")
       cat("etaorg=",etaorg,"\n")
