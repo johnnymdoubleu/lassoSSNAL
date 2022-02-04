@@ -344,7 +344,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       if (eta < stoptol) {
         breakyes <- 1
         msg <- 'converged'
-        cat(msg)
+        cat(msg, "\n")
       }
     }
     
@@ -353,6 +353,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       objscale <- bscale * cscale
       primobj <- objscale * (0.5 * norm(Rp1,"2")^2 + norm(ld * x,"1")) + orgojbconst
       dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + t(b) %*% xi) + orgojbconst
+      # dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + eigenMapMatMult(t(b),xi,4)) + orgojbconst
       relgap <- (primobj - dualobj)/(1+ abs(primobj) + abs(dualobj))
       # ttime <- measure time
     }
@@ -412,37 +413,14 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     sigma <- msuout[1]
     prim_win <- msuout[2]
     dual_win <- msuout[3]
-    
-    
-    
-    
-    
-    
-    
     #       !!!! IMPORTANT !!!!!
       
     #  Comment/uncomment the following "Stop" input command
     #   in both R + MATLAB if you want to manually debug
     #   or supervise the algorithm.
     
-    
-    
-    
-    
-    
-    
-    
     #dbgtest <- readline("Stop")
     #if(dbgtest=="die") break
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     #c(sigma, prim_win, dual_win) <- mexsigma_update_classic_Lasso_SSNAL(sigma, sigmamax, sigmamin, prim_win, dual_win, iter, info_NCG$breakyes)
   }

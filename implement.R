@@ -22,9 +22,14 @@ eps <- 2.220446e-16 # Copy the MATLAB eps essentially
 
 #30secs
 # data <- readMat("UCIdata/abalone_scale_expanded7.mat")
-data <- read.mat("UCIdata/abalone_scale_expanded7.mat")
+# data <- read.mat("UCIdata/abalone_scale_expanded7.mat")
+# data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")
 # data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")
 # data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")
+# data <- read.mat("UCIdata/housing_scale_expanded7.mat")
+# data <- read.mat("UCIdata/triazines_scale_expanded4.mat")
+data <- read.mat("UCIdata/mpg_scale_expanded7.mat")
+
 
 A <- data$A
 At <- t(data$A)

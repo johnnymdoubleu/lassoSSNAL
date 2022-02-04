@@ -270,7 +270,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       dualinf_ratio  = runhist$dualinf[itersub]/runhist$dualinf[itersub-1]
       stagnate_idx   = which(runhist$solve_ok[1:itersub] <= -1)
       stagnate_count = length(stagnate_idx)
-      idx2 = seq(max(1,itersub-7),itersub)
+      idx2 = seq(max(1, itersub-7),itersub)
+      
       if ((itersub >= 10) && all(runhist$solve_ok[idx2] == -1)  
           && (priminf_best < 1e-2) && (dualinf_sub < 1e-3) ) {                   
         tmp = runhist$priminf[idx2] 
