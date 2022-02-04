@@ -120,7 +120,7 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   Ax <- Ax * sqrt(bscale * cscale)
   Rp <- Ax - b + xi
   primfeasorg <- norm(Rp, "2")/ (1+norm(b,"2"))
-  primobj <- 0.5 * norm(Ax-b,"2")^2 + lambda*norm(x,"1") + orgojbconst
+  primobj <- 0.5 * norm(Ax-b,"2")^2 + lambda*norm(x) + orgojbconst
   dualobj <- -0.5 * norm(xi,"2")^2 + t(b) %*% xi + orgojbconst
   
   relgap <- (primobj-dualobj)/(1+abs(primobj)+abs(dualobj))
@@ -128,7 +128,7 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   grad <- eigenMapMatMult(At, (Ax-b), 4)
   # grad <- t(Ainput) %*% (Ax-b)
   etaorg <- norm(grad + proj_inf(x - grad, lambda)$y, "2")
-  eta <- etaorg / (1+norm(grad,"2")+ norm(x, "2"))
+  eta <- etaorg / (1+ norm(grad,"2") + norm(x, "2"))
   
   #runhist <- list(m = m,
   #                n=n,
