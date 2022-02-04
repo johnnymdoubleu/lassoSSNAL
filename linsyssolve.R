@@ -18,8 +18,10 @@ linsyssolve <- function(Ainput, rhs, par){
   #return(sp)
   
   if (m<=dn & Ayes){
-    if (m <= 1000){solver <- 'd_direct'}
-    else if(sp <= max(0.01 & par$n, dn)){
+    if (m <= 1000){
+      solver <- 'd_direct'
+    }
+    else if(sp <= max(0.01 * par$n, dn)){
       solver <- "d_direct"
     }
   }
@@ -45,7 +47,7 @@ linsyssolve <- function(Ainput, rhs, par){
       }
       #c(xi,psq, resnrm, solve_ok) <- psqmry('matvec_classicLasso_Amap',AP, rhs, par)
       #return(psqmry('matvec_Classic_Lasso',AP, rhs, par))
-      psqmryout <- psqmry('matvec_Classic_Lasso',AP, rhs, par)
+      psqmryout <- psqmry('matvec_Classic_Lasso', AP, rhs, par)
       output <- list(xi = psqmryout$x,
                      resnrm = psqmryout$resnrm,
                      solve_ok = psqmryout$solve_ok)
@@ -94,7 +96,8 @@ linsyssolve <- function(Ainput, rhs, par){
       if(0 %in% dim(M)) {
         tmp <- matrix(NA,0,1)
         #return(dim(tmp))
-      } else {
+      } 
+      else {
         tmp <- mldivide(M, rhstmp)
       }
     }
@@ -105,7 +108,8 @@ linsyssolve <- function(Ainput, rhs, par){
     }
     resnrm <-0
     solve_ok <- 1
-    xi <- rhs - AP %*%tmp
+    # xi <- rhs - eigenVecMatMult(AP, tmp, 4)
+    xi <- rhs - AP %*% tmp
     
     #print("here")
   }

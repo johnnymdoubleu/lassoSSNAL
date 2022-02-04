@@ -212,6 +212,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     #c(y,Atxi, xi, parNCG, runhist_NCG, info_NCG) <- classic_Lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
     
     #return(Classic_Lasso_SSNCG(n,b,A, x, Ax, Atxi, xi, ld, parNCG, ssncgop))
+    cat("number of iteration=",iter,"\n")
     clssncgout <- Classic_Lasso_SSNCG(n,b,A, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
     y <- clssncgout$y
     Atxi <- clssncgout$Atxi
@@ -337,7 +338,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
         etaorg <- norm(grad + projinf(eigenMapMatMult(x, bscale,4) - grad, lambdaorg, "2"))
         eta <- etaorg / (1 + norm(grad, "2") + norm(eigenMapMatMult(x, bscale,4), "2"))
       }
-      cat("number of iteration = ", iter, "\n")
+      # cat("number of iteration = ", iter, "\n")
       cat("etaorg=",etaorg,"\n")
       cat("eta=",eta,"\n")
       
