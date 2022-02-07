@@ -71,8 +71,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     #return(normRd)
     GradLxi = -(xi - b + msigAytmp)
     cnt_Amap = cnt_Amap + 1
-    normGradLxi = norm(GradLxi,"2")*sqrt(bscale*cscale)/normborg
-    priminf_sub = normGradLxi
+    normGradLxi <- norm(GradLxi,"2")*sqrt(bscale*cscale)/normborg
+    priminf_sub <- normGradLxi
     
     #return(priminf_sub)
     
@@ -159,7 +159,9 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       const2 = 0.5*const2
     }
     
-    if (dual_ratio > 1.1) const2 = 0.5*const2
+    if (dual_ratio > 1.1) {
+      const2 = 0.5*const2
+    }
     
     tolpsqmr = const2*tolpsqmr
     par$tol = tolpsqmr
@@ -176,14 +178,12 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     resnrm <- lsout$resnrm
     solve_ok <- lsout$solve_ok
     
-    #return(sum(dxi))
+    print(sum(dxi))
     
     
     
-    # Atdxi = t(A) %*% d#30secsxi
-
     # Atdxi = t(A) %*% dxi
-    Atdxi <- t(t(dxi) %*% A)
+    Atdxi <- t(t(dxi)%*%A)
     # Atdxi <- eigenMapMatMult(t(A), dxi, 4)
     cnt_ATmap = cnt_ATmap + 1
     iterpsqmr = length(resnrm)-1
@@ -217,11 +217,23 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     step_op<-list()
     step_op$stepop=stepop
     
-    return(stepop)
+    #return(stepop)
     ## IMPLEMENT findstep() FUNCTION!!
     #[par,Ly,xi,Atxi,y,ytmp,alp,iterstep] = ...
     #findstep(par,b,ld,Ly,xi,Atxi,y,ytmp,dxi,Atdxi,steptol,step_op); 
     ###########
+    
+    #return(findstep(par,b,ld,Ly,xi,Atxi,y,ytmp,dxi,Atdxi,steptol,step_op))
+    
+    fsret <- findstep(par,b,ld,Ly,xi,Atxi,y,ytmp,dxi,Atdxi,steptol,step_op)
+    par = fsret$par
+    Ly = fsret$Ly
+    xi = fsret$xi
+    Atxi = fsret$Atxi
+    y = fsret$y
+    ytmp = fsret$ytmp
+    alp = fsret$alp
+    iterstep = fsret$iter
     
     runhist$solve_ok[itersub] = solve_ok
     runhist$psqmr[itersub]    = iterpsqmr 
@@ -231,6 +243,9 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     if (itersub > 1) {
       Ly_ratio = (Ly-runhist$Ly[itersub-1])/(abs(Ly)+eps)
     }
+    
+    #print(sum(xi))
+    #print(Ly_ratio)
     #if (printsub)
     #  fprintf(' %3.2e %2.0f',alp,iterstep);
     #if (Ly_ratio < 0); fprintf('-'); end
@@ -252,11 +267,12 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       priminf_1half  = min(runhist$priminf[1:ceil(itersub*const3)])
       priminf_2half  = min(runhist$priminf[ceil(itersub*const3)+1:itersub])
       priminf_best   = min(runhist$priminf[1:itersub-1])
-      priminf_ratio  = runhist$priminf(itersub)/runhist$priminf(itersub-1)
-      dualinf_ratio  = runhist$dualinf(itersub)/runhist$dualinf(itersub-1)
+      priminf_ratio  = runhist$priminf[itersub]/runhist$priminf[itersub-1]
+      dualinf_ratio  = runhist$dualinf[itersub]/runhist$dualinf[itersub-1]
       stagnate_idx   = which(runhist$solve_ok[1:itersub] <= -1)
       stagnate_count = length(stagnate_idx)
-      idx2 = seq(max(1,itersub-7),itersub)
+      idx2 = seq(max(1, itersub-7),itersub)
+      
       if ((itersub >= 10) && all(runhist$solve_ok[idx2] == -1)  
           && (priminf_best < 1e-2) && (dualinf_sub < 1e-3) ) {                   
         tmp = runhist$priminf[idx2] 
@@ -284,7 +300,7 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       }
       
       if ((itersub >=10) && (dualinf_sub > 5*min(runhist$dualinf)) 
-          && (priminf_sub > 2*min(runhist.priminf))) { # %% add: 08-Apr-2008
+          && (priminf_sub > 2*min(runhist$priminf))) { # %% add: 08-Apr-2008
         #if (printsub); fprintf('$$$'); end
         breakyes = 5
       }
@@ -292,9 +308,9 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       if (itersub >= 20) {
         #%% add: 12-May-2010
         dualinf_ratioall = runhist$dualinf[2:itersub]/runhist$dualinf[1:itersub-1]
-        idx = find(dualinf_ratioall > 1) 
+        idx = which(dualinf_ratioall > 1) 
         if (length(idx) >= 3) {
-          dualinf_increment = mean(dualinf_ratioall(idx))
+          dualinf_increment = mean(dualinf_ratioall[idx])
           if (dualinf_increment > 1.25) {
             #if (printsub); fprintf('^^'); end
             breakyes = 6;                            
@@ -304,7 +320,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       
       if (breakyes > 0) {
         Rdz =  Atxi + y
-        msigAytmp = -sig*A %*% ytmp
+        # msigAytmp = -sig*A %*% ytmp
+        msigAytmp <- eigenMapMatMult(-sig*A, ytmp, 4)
         cnt_Amap = cnt_Amap + 1
         #%normRd = norm(Rdz);
         #if printsub
@@ -318,6 +335,7 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       }
     }
   }
+  info <- list()
   info$maxCG = max(runhist$psqmr)
   info$avgCG = sum(runhist$psqmr)/itersub
   info$breakyes = breakyes
@@ -332,5 +350,14 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
   info$cnt_pAATmap = cnt_pAATmap
   info$cnt_fAATmap = cnt_fAATmap
   
-  return(c(y,Atxi,xi,par,runhist,info))
+  
+  output <- list(y = y,
+                 Atxi = Atxi,
+                 xi = xi,
+                 par = par,
+                 runhist = runhist,
+                 info = info)
+  return(output)
+  
+  #return(c(y,Atxi,xi,par,runhist,info))
 }

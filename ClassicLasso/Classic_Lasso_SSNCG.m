@@ -57,23 +57,40 @@ cnt_Amap = 0;
 cnt_ATmap = 0;
 cnt_pAATmap = 0;
 cnt_fAATmap = 0;
+
+
+%fprintf('\n  maxitersub = %3.7f',maxitersub); %DBGGG
+%input("Stop") %DBG
+
 %% mian Newton iteration
 for itersub = 1:maxitersub    
     yold = y; xiold = xi; 
     Atxiold = Atxi; 
     Rdz = Atxi + y;
     normRd = norm(Rdz);
+    
+    %fprintf('\n  normRd = %3.7f',normRd); %DBGGG
+    %input("Stop") %DBG
+    
     %Ly = b'*xi - 0.5*norm(xi)^2 - 0.5*sig*norm(ytmp)^2;
     msigAytmp = -sig*Amap(ytmp);
     GradLxi = -(xi - b + msigAytmp); %-(xi - b -sig*Amap(ytmp));
     cnt_Amap = cnt_Amap + 1;
     normGradLxi = norm(GradLxi)*sqrt(bscale*cscale)/normborg;
     priminf_sub = normGradLxi; 
+
+    %fprintf('\n  priminfsub = %3.7f',priminf_sub); %DBGGG
+    %input("Stop") %DBG
+
     if Ascaleyes == 1
        dualinf_sub = norm(Rdz./options.dscale)*cscale/(1+norm(y./options.dscale)*cscale);
     else
        dualinf_sub = normRd*cscale/(1+norm(y)*cscale);
     end
+
+    %fprintf('\n  dualinfsub = %3.7f',dualinf_sub); %DBGGG
+    %input("Stop") %DBG
+
     if max(priminf_sub,dualinf_sub) < tol
        tolsubconst = 0.9;
     else
@@ -83,6 +100,11 @@ for itersub = 1:maxitersub
     runhist.priminf(itersub) = priminf_sub;
     runhist.dualinf(itersub) = dualinf_sub;
     runhist.Ly(itersub)      = Ly;
+
+
+    %fprintf('\n  tolsub = %3.15f',tolsub); %DBGGG
+    %input("Stop") %DBG
+
     if (printsub)
         fprintf('\n      %2.0d  %- 11.10e %3.2e %3.2e %3.2e',...
                  itersub,Ly,priminf_sub,dualinf_sub,par.tolconst);
@@ -102,6 +124,10 @@ for itersub = 1:maxitersub
 %        breakyes = -1;
 %        break;
     end
+
+    %fprintf('\n  breakyes = %3.8f',breakyes); %DBGGG
+    %input("Stop") %DBG
+
     %% Compute Newton direction
     %% precond = 0, 
      par.epsilon = min(1e-3,0.1*normGradLxi); %% good to add
@@ -118,6 +144,11 @@ for itersub = 1:maxitersub
      elseif (dualinf_sub > 5e-6)
         maxitpsqmr = max(maxitpsqmr,500); 
      end
+
+     %fprintf('\n  dualinf_sub = %3.8f',dualinf_sub); %DBGGG
+     %fprintf('\n  maxitpsqmr = %3.8f',maxitpsqmr); %DBGGG
+     %input("Stop") %DBG
+
      if (itersub > 1) 
         prim_ratio = priminf_sub/runhist.priminf(itersub-1); 
         dual_ratio = dualinf_sub/runhist.dualinf(itersub-1); 
@@ -130,6 +161,10 @@ for itersub = 1:maxitersub
      else
         tolpsqmr = min(5e-3, 0.1*norm(rhs));
      end
+
+     %fprintf('\n  rhsnorm = %3.8f',norm(rhs)); %DBGGG
+     %input("Stop") %DBG
+
      const2 = 1;
      if itersub > 1 && (prim_ratio > 0.5 || priminf_sub > 0.1*runhist.priminf(1))
         const2 = 0.5*const2;
@@ -137,10 +172,25 @@ for itersub = 1:maxitersub
      if (dual_ratio > 1.1); const2 = 0.5*const2; end
      tolpsqmr = const2*tolpsqmr;
      par.tol = tolpsqmr; par.maxit = maxitpsqmr;
+
+
+     %fprintf('\n  tolpsqmr = %3.8f',tolpsqmr); %DBGGG
+     %fprintf('\n  maxitpsqmr = %3.8f',maxitpsqmr); %DBGGG
+     %input("Stop") %DBG
+
      [dxi,resnrm,solve_ok] = Classic_Lasso_linsys_solver(Ainput,rhs,par);
      Atdxi = ATmap(dxi);
+
+     %fprintf('\n  sdxi = %3.8f',sum(dxi)); %DBGGG
+     %fprintf('\n  SP = %3.8f',iterpsqmr); %DBGGG
+     %input("Stop") %DBG
+
      cnt_ATmap = cnt_ATmap + 1;
      iterpsqmr = length(resnrm)-1;
+
+     %fprintf('\n  SP = %3.8f',iterpsqmr); %DBGGG
+     %input("Stop") %DBG
+
      if (iterpsqmr ==0)
         cnt_pAATmap = cnt_pAATmap + 1; 
      else
@@ -150,6 +200,11 @@ for itersub = 1:maxitersub
             cnt_fAATmap = cnt_fAATmap + iterpsqmr; 
          end
      end
+
+     %fprintf('\n  SP = %3.8f',cnt_pAATmap); %DBGGG
+     %fprintf('\n  SP = %3.8f',cnt_fAATmap); %DBGGG
+     %input("Stop") %DBG
+
      if (printsub)
           fprintf('| %3.1e %3.1e %3.0d %-3d',par.tol,resnrm(end),iterpsqmr);
           fprintf(' %2.1f %2.0d',const2,sum(1-par.rr));
@@ -160,9 +215,17 @@ for itersub = 1:maxitersub
      else
          stepop = 2;
      end
+
+     %fprintf('\n  SP = %3.8f',stepop); %DBGGG
+     %input("Stop") %DBG
+
      steptol = 1e-5; step_op.stepop=stepop;
      [par,Ly,xi,Atxi,y,ytmp,alp,iterstep] = ...
          findstep(par,b,ld,Ly,xi,Atxi,y,ytmp,dxi,Atdxi,steptol,step_op); 
+
+     %fprintf('\n  sxi = %3.8f',sum(xi)); %DBGGG
+     %input("Stop") %DBG
+
      runhist.solve_ok(itersub) = solve_ok;
      runhist.psqmr(itersub)    = iterpsqmr; 
      runhist.findstep(itersub) = iterstep; 
@@ -171,6 +234,10 @@ for itersub = 1:maxitersub
      if (itersub > 1)
         Ly_ratio = (Ly-runhist.Ly(itersub-1))/(abs(Ly)+eps);
      end
+
+     %fprintf('\n  Ly_ratio = %3.8f',Ly_ratio); %DBGGG
+     %input("Stop") %DBG
+
      if (printsub)
         fprintf(' %3.2e %2.0f',alp,iterstep);
         if (Ly_ratio < 0); fprintf('-'); end

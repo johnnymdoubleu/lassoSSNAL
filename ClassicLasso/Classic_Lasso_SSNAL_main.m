@@ -153,8 +153,25 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
          normy = norm(y); normAtxi = norm(Atxi);
          normx = norm(x);         
          normyxi = max(normx,normAtxi); 
+
+         fprintf('\n normy=%3.7f',normy);
+         fprintf('\n normAtxi = %3.7f',normAtxi);
+         fprintf('\n normx = %3.7f',normx);
+         fprintf('\n normyxi = %3.7f',normyxi);
+         %input("Stop") %DBG
+
          [sigma,bscale2,cscale2,sbc,sboc,bscale,cscale] = ...
              mexscale(sigma,normx,normyxi,bscale,cscale);
+
+         fprintf('\n sigma=%3.7f',sigma);
+         fprintf('\n bscale2 = %3.7f',bscale2);
+         fprintf('\n cscale2 = %3.7f',cscale2);
+         fprintf('\n sbc = %3.7f',sbc);
+         fprintf('\n sboc = %3.7f',sboc);
+         fprintf('\n bscale = %3.7f',bscale);
+         fprintf('\n cscale = %3.7f',cscale);
+         %input("Stop") %DBG
+
          Amap = @(x) Amap(x*sboc);
          ATmap = @(x) ATmap(x*sboc);
          Ainput_nal.Amap = Amap;
@@ -200,19 +217,45 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
 %}
       [y,Atxi,xi,parNCG,runhist_NCG,info_NCG] = ...
           Classic_Lasso_SSNCG(n,b,Ainput_nal,x,Ax,Atxi,xi,ld,parNCG,ssncgop);
+      
+      %{
+      fprintf('\n sy = %3.7f',sum(y));
+      fprintf('\n satxi = %3.7f',sum(Atxi));
+      fprintf('\n sxi = %3.7f',sum(xi));
+      fprintf('\n breakyes = %3.7f',info_NCG.breakyes);
+      input("Stop") %DBG
+      %}
+
       if info_NCG.breakyes < 0
          parNCG.tolconst = max(parNCG.tolconst/1.06,1e-3);
       end
+
+      fprintf('\n parncg tolconst = %3.7f',parNCG.tolconst);
+      %input("Stop") %DBG
+
       Rd = Atxi + y;
       x = -sigma*info_NCG.ytmp;
       Ax = info_NCG.Ax;
       normRd = norm(Rd); normy = norm(y);
+
+      fprintf('\n normrd = %3.7f',normRd);
+      fprintf('\n normy = %3.7f',normy);
+      %input("Stop") %DBG
+
       dualfeas = normRd/(1+normy);
+
+      fprintf('\n dualfeas = %3.7f',dualfeas);
+      %input("Stop") %DBG
+
       if Ascaleyes
          dualfeasorg = norm(Rd./dscale)*cscale/(1+norm(y./dscale)*cscale);
       else
          dualfeasorg = normRd*cscale/(1+normy*cscale);
       end
+
+      fprintf('\n dualfeasorg = %3.7f',dualfeasorg);
+      %input("Stop") %DBG
+
       Rp1 = Ax - b;
       Rp = Rp1 + xi;
       normRp = norm(Rp);
@@ -220,6 +263,15 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
       primfeasorg = sqrt(bscale*cscale)*normRp/normborg;
       maxfeas = max(primfeas,dualfeas);
       maxfeasorg = max(primfeasorg, dualfeasorg);
+
+      fprintf('\n normRp = %3.7f',normRp);
+      fprintf('\n primfeas = %3.7f',primfeas);
+      fprintf('\n primfeasorg = %3.7f',primfeasorg);
+      fprintf('\n maxfeas = %3.7f',maxfeas);
+      fprintf('\n maxfeasorg = %3.7f',maxfeasorg);
+      %input("Stop") %DBG
+
+
       runhist.dualfeas(iter+1) = dualfeas;
       runhist.primfeas(iter+1) = primfeas;
       runhist.maxfeas(iter+1)  = maxfeas;
@@ -234,11 +286,42 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
       runhist.cnt_fAATmap(iter) = info_NCG.cnt_fAATmap;
       %%---------------------------------------------------------
 %% check for termination
-%%---------------------------------------------------------    
+%%---------------------------------------------------------  
+
+
+
+    % IMPORTANT!
+    % NOTE:
+    %   This is the code for which differences lead to differences in
+    %   relgap/eta in the R implementation.
+    %   I believe cascading numerical imprecisions throughout the algorithm
+    %   prohibit doing any better, and appears intractable.
+
+
+
       if (max([primfeasorg,dualfeasorg]) < 500*max(1e-6, stoptol)) 
+          %fprintf('\n Stopping here!');
+          %input("Stop") %DBG
+
           grad = ATmap0(Rp1*sqrt(bscale*cscale));
+
+          fprintf('\n bcsq=%3.7f',sqrt(bscale*cscale));
+          fprintf('\n Rp1n=%3.7f',norm(Rp1));
+          fprintf('\n grad = %3.7f',norm(grad));
+          fprintf('\n dscale = %3.7f',norm(dscale));
+          fprintf('\n lambdaorg = %3.7f',lambdaorg);
+          fprintf('\n innorm = %3.7f',norm(dscale.*x*bscale - grad));
+          fprintf('\n outnorm = %3.7f',norm(proj_inf(dscale.*x*bscale - grad, lambdaorg)));
+          fprintf('#### NEARING THE END ####');
+          %input("Stop") %DBG
+
           if Ascaleyes
              etaorg = norm(grad + proj_inf(dscale.*x*bscale - grad,lambdaorg));
+
+             fprintf('\n thissize=%3.7f',size(proj_inf(dscale.*x*bscale - grad,lambdaorg)));
+             fprintf('\n etaorg = %3.7f',etaorg);
+             %input("Stop") %DBG
+
              eta = etaorg/(1+norm(grad)+norm(dscale.*x*bscale));
           else
              etaorg = norm(grad + proj_inf(x*bscale - grad,lambdaorg));
@@ -249,7 +332,7 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
              msg = 'converged';
           end
       end
-          
+      %input("Stop") %DBG
 %%--------------------------------------------------------    
 %% print results
 %%--------------------------------------------------------
@@ -280,7 +363,13 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
          runhist.dualobj(iter)   = dualobj;
          runhist.time(iter)      = ttime; 
          runhist.relgap(iter)    = relgap;
-      end    
+      end
+
+        fprintf('\n primobj=%3.7f',primobj);
+        fprintf('\n dualobj=%3.7f',dualobj);
+        fprintf('\n relgap=%3.7f',relgap);
+        %input("Stop") %DBG
+
       if (breakyes > 0) 
          if printyes
             fprintf('\n  breakyes = %3.1f, %s',breakyes,msg); 
@@ -292,8 +381,55 @@ function [obj,y,xi,x,info,runhist] = Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lam
       else
          dual_win = dual_win+1; 
       end   
+
+      fprintf('\n prim_win = %3.7f',prim_win);
+      fprintf('\n dual_win = %3.7f',dual_win);
+      %input("Stop") %DBG
+
       [sigma,prim_win,dual_win] = ...
           mexsigma_update_Classic_Lasso_SSNAL(sigma,sigmamax,sigmamin,prim_win,dual_win,iter,info_NCG.breakyes);
+   
+      fprintf('\n sigma=%3.7f',sigma);
+      fprintf('\n prim_win = %3.7f',prim_win);
+      fprintf('\n dual_win = %3.7f',dual_win);
+      
+      
+      
+
+
+
+      
+      %{
+                !!!! IMPORTANT !!!!!
+      
+        Comment/uncomment the following "Stop" input command
+        in both R + MATLAB if you want to manually debug
+        or supervise the algorithm.
+
+
+      %}
+      
+      
+      
+      
+      
+      
+      
+      
+      %input("Stop") %DBG
+
+
+
+
+
+
+
+
+
+
+
+
+
    end
    
    if ~printyes 
