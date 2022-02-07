@@ -180,7 +180,13 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     
     
     
+<<<<<<< Updated upstream
     Atdxi = t(A) %*% dxi
+=======
+    # Atdxi = t(A) %*% dxi
+    Atdxi <- t(t(dxi) %*% A)
+    # Atdxi <- eigenMapMatMult(t(A), dxi, 4)
+>>>>>>> Stashed changes
     cnt_ATmap = cnt_ATmap + 1
     iterpsqmr = length(resnrm)-1
     
