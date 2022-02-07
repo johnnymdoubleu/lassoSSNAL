@@ -106,9 +106,10 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   }
   
   xi <- xi * sqrt(bscale * cscale)
-  At <- t(Ainput)
+  # At <- t(Ainput)
   # Atxi <- t(Ainput) %*% xi
-  Atxi <- eigenMapMatMult(At, xi, 4)
+  Atxi <- t(t(xi) %*% Ainput)
+  # Atxi <- eigenMapMatMult(At, xi, 4)
   y <- y * cscale
   x <- x * bscale
   if (Ascaleyes) {
@@ -125,7 +126,8 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   
   relgap <- (primobj-dualobj)/(1+abs(primobj)+abs(dualobj))
   obj <- c(primobj, dualobj)
-  grad <- eigenMapMatMult(At, (Ax-b), 4)
+  grad <- t(t(Ax-b)%*%Ainput)
+  # grad <- eigenMapMatMult(At, (Ax-b), 4)
   # grad <- t(Ainput) %*% (Ax-b)
   etaorg <- norm(grad + proj_inf(x - grad, lambda)$y, "2")
   eta <- etaorg / (1+ norm(grad,"2") + norm(x, "2"))

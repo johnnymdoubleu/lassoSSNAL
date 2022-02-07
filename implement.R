@@ -32,15 +32,21 @@ data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #working
 
 
 A <- data$A
-At <- t(data$A)
-AtA <- eigenMapMatMult(At, A, n_cores=4)
-eigs_AtA <- eigs_sym(AtA,1) #instant
-
 b <- data$b
-
 c <- 10^(-4) ## THIS IS LAMBDA
-# rho = c*max(abs(At%*%b))
-rho <- c*max(abs(eigenVecMatMult(At, b,4)))
+rho <- c*max(abs(t(t(b)%*%A)))
+# At <- t(data$A)
+# AtA <- eigenTransMapMatMult(A, 4)
+# AtA <- eigenMapMatMult(At, A, n_cores=4)
+
+eigs_AtA <- eigs_sym(eigenTransMapMatMult(A, 4),1) #instant
+# Rprof(NULL)
+# summaryRprof()
+
+
+
+# rho <- c*max(abs(At%*%b))
+# rho <- c*max(abs(eigenVecMatMult(At, b,4)))
 Lip <- eigs_AtA$values
 stoptol <- 1e-6
 n <- ncol(A)

@@ -4,7 +4,8 @@ matvec_Classic_Lasso <- function(y, sigma, AP){
   #print('--')
   #print(dim(AP))
   
-  temp <- eigenMapMatMult(t(AP),y,4)
+  # temp <- eigenMapMatMult(t(AP),y,4)
+  temp <- t(t(y)%*% AP)
   Ay <- y + sigma * eigenMapMatMult(AP,temp,4)
   return(Ay)
 }
