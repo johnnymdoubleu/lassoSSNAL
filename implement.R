@@ -14,13 +14,6 @@ sourceCpp("test.cpp")
 
 eps <- 2.220446e-16 # Copy the MATLAB eps essentially
 
-#30secs
-# data <- readMat("UCIdata/abalone_scale_expanded7.mat")
-data <- read.mat("UCIdata/abalone_scale_expanded7.mat")
-
-<<<<<<< Updated upstream
-# AtA <- t(data$A) %*% data$A #2mins15secs
-=======
 # data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #working
 # data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #working
 # data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")
@@ -28,7 +21,6 @@ data <- read.mat("UCIdata/abalone_scale_expanded7.mat")
 # data <- read.mat("UCIdata/housing_scale_expanded7.mat")
 # data <- read.mat("UCIdata/triazines_scale_expanded4.mat")
 data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #working
->>>>>>> Stashed changes
 
 # AtA <- eigenMatMult(t(data$A),data$A, n_cores=4)
 AtA <- eigenTransMatMult(data$A, n_cores=4)
