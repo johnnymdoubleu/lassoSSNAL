@@ -84,10 +84,7 @@ linsyssolve <- function(Ainput, rhs, par){
     APT <- t(AP)
     # rhstmp <- APT %*% rhs
     rhstmp <- eigenMapMatMult(APT, rhs, 4)
-    
-    #return(dim(rhstmp))
-    #return(sum(rhs))
-    #return(length(rhs))
+
     
     # PAtAP <- APT %*% AP
     PAtAP <- eigenMapMatMult(APT, AP,4)

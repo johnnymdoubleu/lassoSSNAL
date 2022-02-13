@@ -39,10 +39,11 @@ rho <- c*max(abs(t(t(b)%*%A)))
 # AtA <- eigenTransMapMatMult(A, 4)
 # AtA <- eigenMapMatMult(At, A, n_cores=4)
 
-eigs_AtA <- eigs_sym(eigenTransMapMatMult(A, 4),1) #instant
+# eigs_AtA <- eigs_sym(eigenTransMapMatMult(A, 4),1) #instant
+eigs_AtA <- eigs_sym(eigenMult, k=1, args=A)
 # Rprof(NULL)
 # summaryRprof()
-
+# svds(A, 1, eigenMult, args= A)
 
 
 # rho <- c*max(abs(At%*%b))
@@ -58,7 +59,7 @@ opts$Ascale <- 1
 
 #as.numeric(strsplit(format(Sys.time(), "%Y %m %d %H %M %S")," ")[[1]])/rep(1000,6)
 Rprof()
-clo <- Classic_Lasso_SSNAL(A,b,n,rho,opts)
+# clo <- Classic_Lasso_SSNAL(A,b,n,rho,opts)
 Rprof(NULL)
 summaryRprof()
 print("-------------------------")
