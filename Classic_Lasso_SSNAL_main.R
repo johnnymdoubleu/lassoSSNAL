@@ -28,12 +28,8 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
   # Ax <- A%*%x
   Ax <- eigenMapMatMult(A, x, 4)
   
-  obj1 <- 0.5 * norm(Ax - borg, "2")^2 + lambdaorg*norm(x) + orgojbconst
-  obj2 <- -(0.5*(norm(xi,"2")^2)+t(borg) %*% xi) + orgojbconst
-  
-  #return(rescale)
-  #return(c(obj1,obj2))
-  #return(scale)
+  obj1 <- 0.5 * norm(Ax - borg, "2")^2 + lambdaorg * norm(x) + orgojbconst
+  obj2 <- -(0.5 * (norm(xi, "2")^2) + t(borg) %*% xi) + orgojbconst
   bscale <- 1
   cscale <- 1
   if (scale == 1){

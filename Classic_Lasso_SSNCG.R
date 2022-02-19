@@ -1,85 +1,81 @@
 Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) {
-  printsub = 1
-  breakyes = 0
-  maxitersub = 50
-  tiny = 1e-10
-  tol = 1e-6
-  maxitpsqmr =500
-  precond = 0
-  Ascaleyes = 0
+  printsub <- 1
+  breakyes <- 0
+  maxitersub <- 50
+  tiny <- 1e-10
+  tol <- 1e-6
+  maxitpsqmr <- 500
+  precond <- 0
+  Ascaleyes <- 0
   
-  if ("printsub" %in% names(options)) printsub = options$printsub
-  if ("maxitersub" %in% names(options)) maxitersub = options$maxitersub
-  if ("tiny" %in% names(options)) tiny = options$tiny
-  if ("tol" %in% names(options)) tol = options$tol
-  if ("precond" %in% names(options)) precond = options$precond
-  if ("Ascaleyes" %in% names(options)) Ascaleyes = options$Ascaleyes
+  if ("printsub" %in% names(options)) printsub <- options$printsub
+  if ("maxitersub" %in% names(options)) maxitersub <- options$maxitersub
+  if ("tiny" %in% names(options)) tiny <- options$tiny
+  if ("tol" %in% names(options)) tol <- options$tol
+  if ("precond" %in% names(options)) precond <- options$precond
+  if ("Ascaleyes" %in% names(options)) Ascaleyes <- options$Ascaleyes
   
-  existA = options$existA
-  sig = par$sigma
-  bscale = options$bscale
-  cscale = options$cscale
-  normborg = 1+norm(b,"2")*sqrt(bscale*cscale)
+  existA <- options$existA
+  sig <- par$sigma
+  bscale <- options$bscale
+  cscale <- options$cscale
+  normborg <- 1 + norm(b, "2") * sqrt(bscale * cscale)
   
-  #return(normborg)
-  
-  #%% preperation
-  #Amap = @(x) Ainput.Amap(x);
+    #Amap = @(x) Ainput.Amap(x);
   #ATmap = @(x) Ainput.ATmap(x);
   
   # CHANGE ALL OCCURRENCES OF Amap and ATmap to raw calls
   
-  yinput = -Atxi0 - x0/sig
-  #return(mean(yinput))
+  yinput <- -Atxi0 - x0/sig
+  
   pi_out <- proj_inf(yinput,ld)
   
   # PROJ_INF IS IN 'solvers' FOLDER!
-  par$rr = pi_out$rr
-  y = pi_out$y
+  par$rr <- pi_out$rr
+  y <- pi_out$y
   
   #return(c(mean(par$rr),mean(y)))
   
-  Rpb = Ax0 - b + xi0
-  normRp = norm(Rpb,"2")
-  ytmp = yinput - y
-  Atxi = Atxi0
-  xi = xi0
-  Ly = t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2
+  Rpb <- Ax0 - b + xi0
+  normRp <- norm(Rpb, "2")
+  ytmp <- yinput - y
+  Atxi <- Atxi0
+  xi <- xi0
+  Ly <- t(b) %*% xi - 0.5 * norm(xi,"2")^2 - 0.5 * sig * norm(ytmp, "2")^2
   
-  runhist<-list()
+  runhist <- list()
   
-  runhist$psqmr[1] = 0
-  runhist$findstep[1] = 0
-  cnt_Amap = 0
-  cnt_ATmap = 0
-  cnt_pAATmap = 0
-  cnt_fAATmap = 0
-  
-  #return(maxitersub)
+  runhist$psqmr[1] <- 0
+  runhist$findstep[1] <- 0
+  cnt_Amap <- 0
+  cnt_ATmap <- 0
+  cnt_pAATmap <- 0
+  cnt_fAATmap <- 0
   
   
-  for (itersub in seq(1,maxitersub)) {    
-    yold = y
-    xiold = xi
-    Atxiold = Atxi
-    Rdz = Atxi + y;
-    normRd = norm(Rdz,"2")
+  
+  
+  for (itersub in seq(1, maxitersub)) {    
+    yold <- y
+    xiold <- xi
+    Atxiold <- Atxi
+    Rdz <- Atxi + y;
+    normRd <- norm(Rdz,"2")
     #%Ly = b'*xi - 0.5*norm(xi)^2 - 0.5*sig*norm(ytmp)^2;
     #  msigAytmp = -sig*Amap(ytmp);
-    msigAytmp = -sig * A %*% ytmp
-    #return(msigAytmp)
-    #return(normRd)
-    GradLxi = -(xi - b + msigAytmp)
-    cnt_Amap = cnt_Amap + 1
-    normGradLxi <- norm(GradLxi,"2")*sqrt(bscale*cscale)/normborg
+    msigAytmp <- -sig * A %*% ytmp
+    GradLxi <- -(xi - b + msigAytmp)
+    cnt_Amap <- cnt_Amap + 1
+    normGradLxi <- norm(GradLxi, "2") * sqrt(bscale * cscale) / normborg
     priminf_sub <- normGradLxi
     
     #return(priminf_sub)
     
     if(Ascaleyes == 1) {
-      dualinf_sub = norm(Rdz/options$dscale,"2")*cscale/(1+norm(y/options$dscale,"2")*cscale)
+      dualinf_sub <- norm(Rdz / options$dscale, "2") * cscale / 
+        (1 + norm(y / options$dscale, "2") * cscale)
     } else {
-      dualinf_sub = normRd*cscale/(1+norm(y,"2")*cscale)
+      dualinf_sub <- normRd * cscale/ (1 + norm(y, "2") * cscale)
     }
     
     #return(dualinf_sub)

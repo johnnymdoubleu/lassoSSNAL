@@ -45,9 +45,6 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
       dscale <- 1 / sqrt(colSums(A*A))
     }
     
-    #print(dscale)
-    #readline("Hello")
-    
     #A <- A %*% diag(dscale,n,n)
     A <- as.matrix(A%*%Diagonal(x=dscale))
     Ascaleyes <- 1
@@ -68,12 +65,9 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
                   scale = scale,
                   existA = existA,
                   orgojbconst = orgojbconst,
-                  A = A,#ifelse
-                  #Amap0 = Amap0,
-                  #ATmap0 = ATmap0,
+                  A = A,
                   tstart = tstart,
                   Lip = Lip,
-                  #Sigma = Sigma,#ifelse
                   maxiter = maxiter,
                   printyes = printyes,
                   rescale = rescale,
@@ -81,10 +75,6 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   )
   if("Sigma" %in% names(options)) parmain$Sigma = options$Sigma
   
-  #DBUGGING return(parmain)
-  # obj_main,y,xi,x,info_main,runhist <-  Classic_Lasso_SSNAL_main(Amap0,ATmap0,b,lambda,parmain,y,xi,x)
-  #return(list(x,xi,y))
-  #return(Classic_Lasso_SSNAL_main(A,Ainput,b,lambda,parmain,y,xi,x))
   clsmo <- Classic_Lasso_SSNAL_main(A,Ainput,b,lambda,parmain,y,xi,x)
   
   obj_main <- clsmo$obj
