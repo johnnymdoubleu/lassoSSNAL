@@ -120,7 +120,7 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   # grad <- eigenMapMatMult(At, (Ax-b), 4)
   # grad <- t(Ainput) %*% (Ax-b)
   etaorg <- norm(grad + proj_inf(x - grad, lambda)$y, "2")
-  eta <- etaorg / (1+ norm(grad,"2") + norm(x, "2"))
+  eta <- etaorg / (1 + norm(grad,"2") + norm(x, "2"))
   
   #runhist <- list(m = m,
   #                n=n,
@@ -134,7 +134,7 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   #runhist <- list()
   
   info <- list(m = m,
-               n=n,
+               n = n,
                minx = min(min(x)),
                max = max(max(x)),
                relgap = relgap,
@@ -167,10 +167,10 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   #}
   
   
-  output <- list(obj=obj,
-                 y=y,
-                 xi=xi,
-                 x=x,
-                 info=info,
-                 runhist=runhist)
+  output <- list(obj = obj,
+                 y = y,
+                 xi = xi,
+                 x = x,
+                 info = info,
+                 runhist = runhist)
 }

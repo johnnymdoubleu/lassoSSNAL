@@ -3,13 +3,12 @@ proj_inf <- function(x, lambda){
     print("error")
   }
   else if(sum(lambda) == 0){
-    y<-0*x
+    y <- 0 * x
   }
   else{
     y <- pmax(-lambda, pmin(x,lambda))
   }
   rr <- (y==x)
-  rr <- Matrix(rr)*1
-  #print(rr)
+  rr <- Matrix(rr) * 1
   return(list(y=y, rr=rr))
 }
