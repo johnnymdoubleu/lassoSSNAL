@@ -36,7 +36,7 @@ data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #working
 
 
 lipfun <- function(b, A){
-  return(t(t(A%*%b)%*%A))
+  return(t(t(A%*%b) %*% A))
 }
 
 # A <- as.matrix(data$A)
@@ -44,17 +44,17 @@ lipfun <- function(b, A){
 
 A <- data$A
 b <- data$b
-
+n <- ncol(A)
 
 c <- 10^(-4) ## THIS IS LAMBDA
-rho <- c*max(abs(t(t(b)%*%A)))
+rho <- c * max(abs(t(t(b) %*% A)))
 # Rprof(NULL)
 # summaryRprof()
 
-eigs_AtA <- eigs_sym(lipfun, k=1, n=ncol(A), args=A)
+eigs_AtA <- eigs_sym(lipfun, k = 1, n = n, args = A)
 Lip <- eigs_AtA$values
 stoptol <- 1e-6
-n <- ncol(A)
+
 
 opts <- c()
 opts$stoptol <- stoptol
@@ -63,10 +63,10 @@ opts$Ascale <- 1
 
 #as.numeric(strsplit(format(Sys.time(), "%Y %m %d %H %M %S")," ")[[1]])/rep(1000,6)
 Rprof()
-clo <- Classic_Lasso_SSNAL(A,b,n,rho,opts)
+clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts)
 Rprof(NULL)
 summaryRprof()
 print("-------------------------")
-cat("min(X) = ",clo$info$minx,"\n")
-cat("max(X) = ",clo$info$max,"\n")
-cat("nnz = ",findnnz(clo$info$x,0.999)$k,"\n")
+cat("min(X) = ", clo$info$minx, "\n")
+cat("max(X) = ", clo$info$max, "\n")
+cat("nnz = ", findnnz(clo$info$x,0.999)$k, "\n")
