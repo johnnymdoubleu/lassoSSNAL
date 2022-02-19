@@ -21,16 +21,15 @@ sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 # Rprof()
 eps <- 2.220446e-16 # Copy the MATLAB eps essentially
-# data <- readMat("UCIdata/abalone_scale_expanded7.mat")
 #30secs
 
-# data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #working
+data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #working
 # data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #working
 # data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")    #working
 # data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")      #working
 # data <- read.mat("UCIdata/housing_scale_expanded7.mat")    #working
 # data <- read.mat("UCIdata/triazines_scale_expanded4.mat")  #working
-data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #working
+# data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #working
 
 # data <- read.mat("UCIdata/E2006.train.mat")
 # data <- read.mat("UCIdata/E2006.test.mat")
@@ -40,11 +39,11 @@ lipfun <- function(b, A){
   return(t(t(A%*%b)%*%A))
 }
 
-A <- as.matrix(data$A)
-b <- data$b
-
-# A <- data$A
+# A <- as.matrix(data$A)
 # b <- data$b
+
+A <- data$A
+b <- data$b
 
 
 c <- 10^(-4) ## THIS IS LAMBDA

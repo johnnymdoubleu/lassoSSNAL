@@ -199,16 +199,12 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     else if(dualfeas > 1e-1){maxitersub <- max(maxitersub, 20)}
     ssncgop <- c(ssncgop, maxitersub = maxitersub)
     
-    #return(c(n,mean(b),mean(x),
-    #         mean(Ax),mean(Atxi),mean(xi),mean(ld)))
     
-    #return(ssncgop)
     
-    #c(y,Atxi, xi, parNCG, runhist_NCG, info_NCG) <- classic_Lasso_SSNCG(n,b,Ainput_nal, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
     
-    #return(Classic_Lasso_SSNCG(n,b,A, x, Ax, Atxi, xi, ld, parNCG, ssncgop))
     cat("number of iteration=",iter,"\n")
-    clssncgout <- Classic_Lasso_SSNCG(n,b,A, x, Ax, Atxi, xi, ld, parNCG, ssncgop)
+    clssncgout <- Classic_Lasso_SSNCG(n, b, A, x, Ax, Atxi, xi, 
+                                      ld, parNCG, ssncgop)
     y <- clssncgout$y
     Atxi <- clssncgout$Atxi
     xi <- clssncgout$xi
@@ -226,7 +222,6 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     }
     
     cat("parncg_tolconst=",parNCG$tolconst,"\n")
-    #return()
     
     Rd <- Atxi + y
     x <- -sigma * info_NCG$ytmp
@@ -237,12 +232,9 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     
     cat("normRd=", normRd, "\n")
     cat("normy=", normy, "\n")
-    #return()
     
     dualfeas <- normRd / (1 + normy)
-    
     cat("dualfeas=", dualfeas, "\n")
-    #return()
     
     if (Ascaleyes){
       dualfeasorg <- norm(Rd / dscale, "2")*cscale / 
@@ -323,8 +315,10 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       else {
         # etaorg <- norm(grad + projinf(x %*% bscale - grad, lambdaorg, "2"))
         # eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale, "2"))
-        etaorg <- norm(grad + projinf(eigenMapMatMult(x, bscale,4) - grad, lambdaorg, "2"))
-        eta <- etaorg / (1 + norm(grad, "2") + norm(eigenMapMatMult(x, bscale,4), "2"))
+        etaorg <- norm(grad + projinf(eigenMapMatMult(x, bscale,4) - 
+                                        grad, lambdaorg, "2"))
+        eta <- etaorg / (1 + norm(grad, "2") + 
+                           norm(eigenMapMatMult(x, bscale,4), "2"))
       }
       # cat("number of iteration = ", iter, "\n")
       cat("etaorg=", etaorg, "\n")
@@ -379,7 +373,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     
     #return(runhist)
     
-    cat("breakyes=",breakyes,"\n")
+    cat("breakyes=", breakyes, "\n")
     #return()
     
     if (breakyes > 0) {
@@ -428,11 +422,11 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
                Ax = Ax,
                msg = msg)
   
-  output <- list(obj=c(obj1,obj2),
-                 y=y,
-                 xi=xi,
-                 x=x,
-                 info=info,
-                 runhist=runhist)
+  output <- list(obj = c(obj1,obj2),
+                 y = y,
+                 xi = xi,
+                 x = x,
+                 info = info,
+                 runhist = runhist)
   return(output)
 }
