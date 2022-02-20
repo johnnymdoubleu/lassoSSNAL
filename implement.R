@@ -1,6 +1,5 @@
 # library(data.table)
-# library(readr)
-#library(R.matlab)
+library(readr)
 library(rmatio)
 library(Rcpp)
 library(RSpectra)
@@ -23,7 +22,7 @@ sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
 eps <- 2.220446e-16 # Copy the MATLAB eps essentially
 #30secs
 
-data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #working
+# data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #working
 # data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #working
 # data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")    #working
 # data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")      #working
@@ -34,19 +33,27 @@ data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #working
 # data <- read.mat("UCIdata/E2006.train.mat")
 # data <- read.mat("UCIdata/E2006.test.mat")
 
+A <- read_delim("UCIdata/GSE40279_average_beta.txt", "\t", col_names = TRUE)
+# A <- A[-1,]
+A[,1] <- NULL
+A <- as.matrix(A)
 
+b <- as.vector(read.csv("UCIdata/sample.csv", header=FALSE)[,3])
 lipfun <- function(b, A){
   return(t(t(A%*%b) %*% A))
 }
 
+grid <- 10^seq(2, -5, length = 50)
+A <- t(A)
 # A <- as.matrix(data$A)
 # b <- data$b
 
-A <- data$A
-b <- data$b
+# A <- data$A
+# b <- data$b
 n <- ncol(A)
 
-c <- 10^(-4) ## THIS IS LAMBDA
+c <- 10^(-3.5) ## THIS IS LAMBDA
+c <- 3.727594e-03
 rho <- c * max(abs(t(t(b) %*% A)))
 # Rprof(NULL)
 # summaryRprof()
