@@ -142,11 +142,11 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     
     const2 <- 1
     if (itersub > 1 &
-        (prim_ratio > 0.5 | priminf_sub > 0.1 * runhist$priminf[1]) ) {
+        (prim_ratio > 0.5 | priminf_sub > 0.1 * runhist$priminf[1])){
       const2 <- 0.5 * const2
     }
     
-    if (dual_ratio > 1.1) {
+    if (dual_ratio > 1.1){
       const2 <- 0.5 * const2
     }
     
@@ -175,10 +175,10 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     
     #return(iterpsqmr)
     
-    if (iterpsqmr ==0) {
+    if (iterpsqmr == 0) {
       cnt_pAATmap <- cnt_pAATmap + 1
     } else {
-      if (existA==TRUE) {
+      if (existA == TRUE) {
         cnt_pAATmap <- cnt_pAATmap + iterpsqmr
       } else {
         cnt_fAATmap <- cnt_fAATmap + iterpsqmr
@@ -191,7 +191,7 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     #end
     
     par$iter <- itersub;
-    if ((itersub<=3) & (dualinf_sub > 1e-4) | (par$iter <3)) {
+    if ((itersub <= 3) & (dualinf_sub > 1e-4) | (par$iter <3)) {
       stepop <- 1
     } else {
       stepop <- 2

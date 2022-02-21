@@ -4,6 +4,7 @@ library(rmatio)
 library(Rcpp)
 library(RSpectra)
 library(Matrix)
+library(glmnet)
 # library(DWDLargeR)
 
 source("lassoSSNAL/Classic_Lasso_SSNAL.R")
@@ -52,13 +53,13 @@ A <- t(A)
 # A <- data$A
 # b <- data$b
 grid <- 10^seq(5, -5, length = 50)
-# cv.glmnet(A,b,lamda=grid)
-glambda <- glmnet(A,b,alpha=1, lambda = grid)
+glambda <- cv.glmnet(A,b,lambda = grid)
+# glmnet(A,b,alpha=1, lambda = grid)
 n <- ncol(A)
 
 c <- 10^(-3.5) ## THIS IS LAMBDA
 c <- 3.727594e-03
-c <- glambda$lambda.min
+# c <- glambda$lambda.min
 rho <- c * max(abs(t(t(b) %*% A)))
 # Rprof(NULL)
 # summaryRprof()
