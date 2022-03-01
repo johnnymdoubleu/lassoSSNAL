@@ -319,6 +319,9 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
   info$RpGradratio <- normRp * sqrt(bscale * cscale)/(normGradLxi * normborg)
   info$rankX <- par$rr
   info$ytmp <- ytmp
+  
+  cat("norm_ytmp=",norm(ytmp,"2"),"\n")
+  
   info$cnt_Amap <- cnt_Amap
   info$cnt_ATmap <- cnt_ATmap
   info$Ax <- msigAytmp
