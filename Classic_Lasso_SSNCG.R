@@ -49,9 +49,6 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
   cnt_pAATmap <- 0
   cnt_fAATmap <- 0
   
-  
-  
-  
   for (itersub in seq(1, maxitersub)) {    
     yold <- y
     xiold <- xi
@@ -120,7 +117,7 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     } else if (dualinf_sub > 5e-6) {
       maxitpsqmr <- max(maxitpsqmr, 500) 
     }
-  
+    
     if (itersub > 1) {
       prim_ratio <- priminf_sub / runhist$priminf[itersub - 1]
       dual_ratio <- dualinf_sub / runhist$dualinf[itersub - 1]
@@ -229,7 +226,7 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     ### CHECK FOR STAGNATION LINE 161 GitHub code
     #%% check for stagnation
     if (itersub > 4) {
-      idx <- seq(max(1, itersub - 3), itersub)
+      idx <- seq(max(1, itersub - 3): itersub)
       tmp <- runhist$priminf[idx]
       ratio <- min(tmp) / max(tmp)
       if ((all(runhist$solve_ok[idx] <= -1)) & (ratio > 0.9)  
@@ -241,11 +238,13 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       priminf_1half <- min(runhist$priminf[1:ceil(itersub * const3)])
       priminf_2half <- min(runhist$priminf[ceil(itersub * const3) + 1:itersub])
       priminf_best <- min(runhist$priminf[1:itersub-1])
-      priminf_ratio <- runhist$priminf[itersub] / runhist$priminf[itersub-1]
-      dualinf_ratio <- runhist$dualinf[itersub] / runhist$dualinf[itersub-1]
+      priminf_ratio <- runhist$priminf[itersub] / runhist$priminf[itersub - 1]
+      dualinf_ratio <- runhist$dualinf[itersub] / runhist$dualinf[itersub - 1]
       stagnate_idx <- which(runhist$solve_ok[1:itersub] <= -1)
       stagnate_count <- length(stagnate_idx)
-      idx2 <- seq(max(1, itersub - 7), itersub)
+      
+   
+      idx2 <- seq(max(1, itersub - 7):itersub)
       
       if ((itersub >= 10) & all(runhist$solve_ok[idx2] == -1)  
           & (priminf_best < 1e-2) & (dualinf_sub < 1e-3) ) {                   
@@ -274,7 +273,7 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
         breakyes <- 4
       }
       
-      if ((itersub >=10) & (dualinf_sub > 5*min(runhist$dualinf)) 
+      if ((itersub >= 10) & (dualinf_sub > 5*min(runhist$dualinf)) 
           & (priminf_sub > 2 * min(runhist$priminf))) {
         #if (printsub); fprintf('$$$'); end
         breakyes <- 5
@@ -319,6 +318,9 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
   info$RpGradratio <- normRp * sqrt(bscale * cscale)/(normGradLxi * normborg)
   info$rankX <- par$rr
   info$ytmp <- ytmp
+  
+  cat("norm_ytmp=",norm(ytmp,"2"),"\n")
+  
   info$cnt_Amap <- cnt_Amap
   info$cnt_ATmap <- cnt_ATmap
   info$Ax <- msigAytmp

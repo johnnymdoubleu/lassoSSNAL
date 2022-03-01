@@ -64,19 +64,19 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
   #)
   
   #if (existA){Ainput_nal <- c(Ainput_nal, A=A)}
-  sigma = max(1/sqrt(Lip), min(c(1, sigmaLip, lambdaorg)))
+  sigma <- max(1 / sqrt(Lip), min(1, sigmaLip, lambdaorg))
   #return(sigma)
   if (Ascaleyes){sigma <- 3}
   if ("sigma" %in% names(parmain)){sigma <- parmain$sigma}
   #return(c(obj1,obj2))
-  Rp1 <- Ax- b
+  Rp1 <- Ax - b
   Rp <- Rp1 + xi
   Rd <- Atxi + y
   primfeas <- norm(Rp, "2") / normb
-  dualfeas <- norm(Rd, "2")/(1 + norm(y, "2"))
-  primfeasorg <- sqrt(bscale * cscale) * norm(Rp, "2")/normborg
+  dualfeas <- norm(Rd, "2") / (1 + norm(y, "2"))
+  primfeasorg <- sqrt(bscale * cscale) * norm(Rp, "2") / normborg
   dualfeasorg <- norm(Rd / dscale, "2")*cscale / 
-    (1+norm(y/dscale, "2") * cscale)
+    (1 + norm(y / dscale, "2") * cscale)
   maxfeas <- max(primfeas, dualfeas)
   maxfeasorg <- max(primfeasorg, dualfeasorg)
   relgap <- (obj1 - obj2) / (1 + obj1 + obj2)
@@ -109,7 +109,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
   breakyes <- 0
   prim_win <- 0
   dual_win <- 0
-  ssncgop <- list(existA=existA,
+  ssncgop <- list(existA = existA,
                   tol = stoptol,
                   precond = 0,
                   bscale = bscale,
@@ -117,13 +117,18 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
                   printsub = printyes
   )
   if (Ascaleyes) {
-    ssncgop <- c(ssncgop, Ascaleyes=1)
+    # ssncgop <- c(ssncgop, Ascaleyes = 1)
+    ssncgop$Ascaleyes <- 1
     ssncgop$dscale <- dscale
   }
-  else {ssncgop <- c(ssncgop, Ascaleyes = 0)}
+  else {
+    ssncgop <- c(ssncgop, Ascaleyes = 0)
+    ssncgop$Ascaleyes <- 0
+  }
   
   sigmamax <- 1e7
   sigmamin <- 1e-4
+  
   if (Ascaleyes){
     sigmamax <- sigmamax * mean(dscale)
   }
@@ -139,9 +144,9 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
   normyxi <- max(normx, normAtxi)
   
   for (iter in c(1:maxiter)) {
-    if ((rescale==1 & maxfeas < 5e2 & iter%%3 ==1 & iter > 1)
+    if ((rescale == 1 & maxfeas < 5e2 & iter%%3 == 1 & iter > 1)
         |(is.null(A) & (rescale >= 2 & maxfeas < 1e-1 & 
-                        abs(relgap)<0.05 & iter >= 5 & 
+                        abs(relgap) < 0.05 & iter >= 5 & 
                         max(normx/normyxi, normyxi/normx) > 1.7 & 
                         iter%%5 ==1))){
       normy <- norm(y, "2")
@@ -173,7 +178,6 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       #if (exist(A)){Ainput_nal <- c(Ainput_nal, A= A*sboc)}
       
       A <- A * sboc
-      
       b <- b / sbc
       ld <- ld / cscale2
       x <- x / bscale2
@@ -197,8 +201,8 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     if (dualfeas < 1e-5){maxitersub <- max(maxitersub, 30)}
     else if(dualfeas > 1e-3){maxitersub <- max(maxitersub, 30)}
     else if(dualfeas > 1e-1){maxitersub <- max(maxitersub, 20)}
-    ssncgop <- c(ssncgop, maxitersub = maxitersub)
-    
+    # ssncgop <- c(ssncgop, maxitersub = maxitersub)
+    ssncgop$maxitersub <- maxitersub
     
     
     
@@ -218,10 +222,10 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     print(info_NCG$breakyes)
     
     if (info_NCG$breakyes < 0){
-      parNCG$tolconst <- max(parNCG$tolconst/1.06, 1e-3)
+      parNCG$tolconst <- max(parNCG$tolconst / 1.06, 1e-3)
     }
     
-    cat("parncg_tolconst=",parNCG$tolconst,"\n")
+    cat("parncg_tolconst=", parNCG$tolconst, "\n")
     
     Rd <- Atxi + y
     x <- -sigma * info_NCG$ytmp
@@ -237,14 +241,17 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     cat("dualfeas=", dualfeas, "\n")
     
     if (Ascaleyes){
-      dualfeasorg <- norm(Rd / dscale, "2")*cscale / 
-        (1 + norm(y/dscale, "2") * cscale)
+      dualfeasorg <- norm(Rd / dscale, "2") * cscale / 
+        (1 + norm(y / dscale, "2") * cscale)
     }
     else {
       dualfeasorg <- normRd * cscale / (1 + normy * cscale)
     }
     
     cat("dualfeasorg=", dualfeasorg, "\n")
+	#cat("sumAx=",norm(Ax,"2"),"\n")
+	#cat("sumxi=",norm(xi,"2"),"\n")
+	#cat("sumb=",norm(b,"2"),"\n")
     #return()
     
     Rp1 <- Ax - b
@@ -396,6 +403,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     msuout <- mexsigma_update(sigma, sigmamax, sigmamin, prim_win, dual_win, iter, info_NCG$breakyes)
     
     sigma <- msuout[1]
+    cat("sigma=",sigma,"\n")
     prim_win <- msuout[2]
     dual_win <- msuout[3]
     #       !!!! IMPORTANT !!!!!

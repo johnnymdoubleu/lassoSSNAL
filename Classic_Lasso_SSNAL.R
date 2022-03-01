@@ -104,7 +104,7 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   x <- x * bscale
   if (Ascaleyes) {
     x <- dscale * x
-    y <- dscale / y
+    y <- y / dscale
   }
   Rd <- Atxi + y
   dualfeasorg <- norm(Rd, "2")/ (1 + norm(y,"2"))

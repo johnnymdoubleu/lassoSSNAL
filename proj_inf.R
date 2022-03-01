@@ -8,7 +8,8 @@ proj_inf <- function(x, lambda){
   else{
     y <- pmax(-lambda, pmin(x,lambda))
   }
-  rr <- (y==x)
+  # rr <- (y==x)
+  rr <- (abs(y-x) < 1e-6 * lambda)
   rr <- Matrix(rr) * 1
   return(list(y=y, rr=rr))
 }
