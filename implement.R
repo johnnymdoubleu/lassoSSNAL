@@ -85,7 +85,7 @@ cat("nnz = ", findnnz(clo$info$x,0.999)$k, "\n")
 
 
 # coefs <- clo$x
-# objective <- 0.5*sum((b - (A %*% coefs))^2) + 
+# objective <- 0.5*sum((b - (A %*% coefs))^2) +
 #   rho * sum(abs(coefs))
 # objective
 # 
@@ -97,7 +97,7 @@ cat("nnz = ", findnnz(clo$info$x,0.999)$k, "\n")
 # summaryRprof()
 # 
 # coefs <- coef(test)[-1]*sd(b)
-# objective <- 0.5*sum((b - (A %*% coefs))^2) + 
+# objective <- 0.5*sum((b - (A %*% coefs))^2) +
 #   rho * sum(abs(coefs))
 # objective
 # min(coef(test)[-1]*sd(b))
