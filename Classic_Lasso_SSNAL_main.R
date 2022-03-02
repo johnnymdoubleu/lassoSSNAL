@@ -245,6 +245,9 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     }
     
     cat("dualfeasorg=", dualfeasorg, "\n")
+	#cat("sumAx=",norm(Ax,"2"),"\n")
+	#cat("sumxi=",norm(xi,"2"),"\n")
+	#cat("sumb=",norm(b,"2"),"\n")
     #return()
     
     Rp1 <- Ax - b
@@ -396,6 +399,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     msuout <- mexsigma_update(sigma, sigmamax, sigmamin, prim_win, dual_win, iter, info_NCG$breakyes)
     
     sigma <- msuout[1]
+    cat("sigma=",sigma,"\n")
     prim_win <- msuout[2]
     dual_win <- msuout[3]
     #       !!!! IMPORTANT !!!!!

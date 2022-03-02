@@ -132,7 +132,7 @@ findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
       Atxi = Atxi0+alp*Atdxi
    }
    #if (printlevel); fprintf('m'); end
-   if (isempty(Ly)) {
+   if (!exists("Ly")) {
       Ly = t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2            
    }
     
