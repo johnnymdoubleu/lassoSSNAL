@@ -6,86 +6,36 @@ library(Matrix)
 library(glmnet)
 library(tidyverse)
 
-source("working/Classic_Lasso_SSNAL.R")
-source("working/Classic_Lasso_SSNAL_main.R")
-source("working/Classic_Lasso_SSNCG.R")
-source("working/proj_inf.R")
-source("working/linsyssolve.R")
-source("working/findstep.R")
-source("working/psqmry.R")
-source("working/matvec_ClassicLasso.R")
-source("working/findnnz.R")
-sourceCpp("working/mex_matrix_mult.cpp")
-sourceCpp("working/mexsigma_update_classic_Lasso_SSNAL.cpp")
+source("lassoSSNAL/Classic_Lasso_SSNAL.R")
+source("lassoSSNAL/Classic_Lasso_SSNAL_main.R")
+source("lassoSSNAL/Classic_Lasso_SSNCG.R")
+source("lassoSSNAL/proj_inf.R")
+source("lassoSSNAL/linsyssolve.R")
+source("lassoSSNAL/findstep.R")
+source("lassoSSNAL/psqmry.R")
+source("lassoSSNAL/matvec_ClassicLasso.R")
+source("lassoSSNAL/findnnz.R")
+sourceCpp("lassoSSNAL/mex_matrix_mult.cpp")
+sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 
-# data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #working
-# data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #working
-# data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")    #working
-# data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")      #working
-# data <- read.mat("UCIdata/housing_scale_expanded7.mat")    #working
-data <- read.mat("UCIdata/triazines_scale_expanded4.mat")  #working
-# data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #working
+# data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #lassoSSNAL
+# data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #lassoSSNAL
+# data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")    #lassoSSNAL
+# data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")      #lassoSSNAL
+# data <- read.mat("UCIdata/housing_scale_expanded7.mat")    #lassoSSNAL
+# data <- read.mat("UCIdata/triazines_scale_expanded4.mat")  #lassoSSNAL
+data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #lassoSSNAL
 
 # A <- read_delim("UCIdata/GSE40279_average_beta.txt", "\t", col_names = TRUE)
 # A[,1] <- NULL
 # A <- as.matrix(A)
 # b <- as.vector(read.csv("UCIdata/sample.csv", header=FALSE)[,3])
 
-<<<<<<< Updated upstream
-A <- read_delim("UCIdata/GSE40279_average_beta.txt", "\t", col_names = TRUE)
-# A <- A[-1,]
-A[,1] <- NULL
-A <- as.matrix(A)
-
-b <- as.vector(read.csv("UCIdata/sample.csv", header=FALSE)[,3])
-=======
->>>>>>> Stashed changes
 lipfun <- function(b, A){
   return(t(t(A%*%b) %*% A))
 }
 
-<<<<<<< Updated upstream
-
-A <- t(A)
-
-# A <- as.matrix(data$A)
-# b <- data$b
-
-# A <- data$A
-# b <- data$b
-grid <- 10^seq(1, -5, length = 50)
-glambda <- cv.glmnet(A,b,lambda = grid)
-# glmnet(A,b,alpha=1, lambda = grid)
-n <- ncol(A)
-
-c <- 10^(-3.5) ## THIS IS LAMBDA
-c <- 3.727594e-03
-c <- glambda$lambda.min
-rho <- c * max(abs(t(t(b) %*% A)))
-# Rprof(NULL)
-# summaryRprof()
-
-eigs_AtA <- eigs_sym(lipfun, k = 1, n = n, args = A)
-Lip <- eigs_AtA$values
-stoptol <- 1e-6
-
-
-opts <- c()
-opts$stoptol <- stoptol
-opts$Lip <- Lip
-opts$Ascale <- 1
-
-#as.numeric(strsplit(format(Sys.time(), "%Y %m %d %H %M %S")," ")[[1]])/rep(1000,6)
-Rprof()
-clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts)
-Rprof(NULL)
-summaryRprof()
-print("-------------------------")
-cat("min(X) = ", clo$info$minx, "\n")
-cat("max(X) = ", clo$info$max, "\n")
-cat("nnz = ", findnnz(clo$info$x,0.999)$k, "\n")
-=======
 ##############################################
 # A <- t(A)              #only for methylation
 # A <- as.matrix(data$A) #only for methylation
@@ -162,9 +112,9 @@ nx<-sample(1:nrow(A))
 levels<-2
 gmem<-split(nx,nx%%levels)
 
-nama <- "triazines4"
+nama <- "mpg7"
 grid <- 10^seq(-14/3, -2, length = 10) * max(abs(t(t(b) %*% A)))
-saveRDS(grid, paste0("working/UCI/",nama,"/", nama, "_lambda.rds"))
+saveRDS(grid, paste0("lassoSSNAL/UCI/",nama,"/", nama, "_lambda.rds"))
 for (i in grid){
   mses.ssnal <- mses.glm <- objs.ssnal <- objs.glm <- nnzs.ssnal <- nnzs.glm <- c()
   cat("\n\nNow doing rho value", i,"\n\n\n\n\n\n\n\n")
@@ -229,52 +179,52 @@ for (i in grid){
   }
   
   #choose the choice of format to save
-  saveRDS(mses.ssnal, paste0("working/UCI/", nama, "/",nama, "_ssnal", which(grid==i), "_mse.rds"))
-  saveRDS(mses.glm, paste0("working/UCI/", nama, "/",nama, "_glmnet", which(grid==i), "_mse.rds"))
-  saveRDS(nnzs.ssnal, paste0("working/UCI/", nama, "/",nama, "_ssnal", which(grid==i), "_nnz.rds"))
-  saveRDS(nnzs.glm, paste0("working/UCI/", nama, "/",nama, "_glmnet", which(grid==i), "_nnz.rds"))
-  saveRDS(objs.ssnal, paste0("working/UCI/", nama, "/",nama, "_ssnal", which(grid==i), "_obj.rds"))
-  saveRDS(objs.glm, paste0("working/UCI/", nama, "/",nama, "_glmnet", which(grid==i), "_obj.rds"))
+  saveRDS(mses.ssnal, paste0("lassoSSNAL/UCI/", nama, "/",nama, "_ssnal", which(grid==i), "_mse.rds"))
+  saveRDS(mses.glm, paste0("lassoSSNAL/UCI/", nama, "/",nama, "_glmnet", which(grid==i), "_mse.rds"))
+  saveRDS(nnzs.ssnal, paste0("lassoSSNAL/UCI/", nama, "/",nama, "_ssnal", which(grid==i), "_nnz.rds"))
+  saveRDS(nnzs.glm, paste0("lassoSSNAL/UCI/", nama, "/",nama, "_glmnet", which(grid==i), "_nnz.rds"))
+  saveRDS(objs.ssnal, paste0("lassoSSNAL/UCI/", nama, "/",nama, "_ssnal", which(grid==i), "_obj.rds"))
+  saveRDS(objs.glm, paste0("lassoSSNAL/UCI/", nama, "/",nama, "_glmnet", which(grid==i), "_obj.rds"))
   
   
-  # write.csv(mses.ssnal, paste0("working/", nama,"/",nama, "_ssnal", which(grid==i), "_mse.csv"))
-  # write.csv(mses.glm, paste0("working/", nama,"/",nama, "_glmnet", which(grid==i), "_mse.csv"))
-  # write.csv(nnzs.ssnal, paste0("working/", nama,"/",nama, "_ssnal", which(grid==i), "_nnz.csv"))
-  # write.csv(nnzs.glm, paste0("working/", nama,"/",nama, "_glmnet", which(grid==i), "_nnz.csv"))
-  # write.csv(objs.ssnal, paste0("working/", nama,"/",nama, "_ssnal", which(grid==i), "_obj.csv"))
-  # write.csv(objs.glm, paste0("working/", nama,"/",nama, "_glmnet", which(grid==i), "_obj.csv"))
+  # write.csv(mses.ssnal, paste0("lassoSSNAL/", nama,"/",nama, "_ssnal", which(grid==i), "_mse.csv"))
+  # write.csv(mses.glm, paste0("lassoSSNAL/", nama,"/",nama, "_glmnet", which(grid==i), "_mse.csv"))
+  # write.csv(nnzs.ssnal, paste0("lassoSSNAL/", nama,"/",nama, "_ssnal", which(grid==i), "_nnz.csv"))
+  # write.csv(nnzs.glm, paste0("lassoSSNAL/", nama,"/",nama, "_glmnet", which(grid==i), "_nnz.csv"))
+  # write.csv(objs.ssnal, paste0("lassoSSNAL/", nama,"/",nama, "_ssnal", which(grid==i), "_obj.csv"))
+  # write.csv(objs.glm, paste0("lassoSSNAL/", nama,"/",nama, "_glmnet", which(grid==i), "_obj.csv"))
 }
 # 
-# tmi_rmd <- readRDS(paste0("working/", nama, "_ssnal", 1, "_mse.rds"))
+# tmi_rmd <- readRDS(paste0("lassoSSNAL/", nama, "_ssnal", 1, "_mse.rds"))
 
 for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazines4")){
   nama <- j
   r_ssnal_cv_df <- data.frame(log_lam=numeric(),mse=numeric(), ciw=numeric(),nnz=numeric())
   glm_cv_df <- data.frame(log_lam=numeric(),mse=numeric(),ciw=numeric(), nnz=numeric())
-  each.lambda <- readRDS(paste0("working/UCI/",nama,"/", nama, "_lambda.rds"))
+  each.lambda <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama, "_lambda.rds"))
   
   for (i in each.lambda) {
     tll <- log(i)
     num <- which(each.lambda==i)
-    tmi_rmd <- readRDS(paste0("working/UCI/",nama,"/", nama, "_ssnal", num, "_mse.rds"))
-    tmi_nnz <- readRDS(paste0("working/UCI/",nama,"/", nama,  "_ssnal", num, "_nnz.rds"))
+    tmi_rmd <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama, "_ssnal", num, "_mse.rds"))
+    tmi_nnz <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama,  "_ssnal", num, "_nnz.rds"))
     
-    # tmi_rmd <- read.csv(paste0("working/", nama,"/",nama, "_ssnal", num, "_mse.csv"))
-    # tmi_nnz <- read.csv(paste0("working/", nama,"/",nama,  "_ssnal", num, "_nnz.csv"))
+    # tmi_rmd <- read.csv(paste0("lassoSSNAL/", nama,"/",nama, "_ssnal", num, "_mse.csv"))
+    # tmi_nnz <- read.csv(paste0("lassoSSNAL/", nama,"/",nama,  "_ssnal", num, "_nnz.csv"))
     
-    # tmi_rmd <- readRDS("working/Methylation/resobjs.rds")
-    # tmi_intres <- readRDS("working/Methylation/intres.rds")
-    # tmi_goodlam.test <- readRDS("working/Methylation/goodlam_1000_methtest_forobjonly.rds")
-    # tmi_goodlam <- readRDS("working/Methylation/goodlam_1000_meth_forobjonly.rds")
+    # tmi_rmd <- readRDS("lassoSSNAL/Methylation/resobjs.rds")
+    # tmi_intres <- readRDS("lassoSSNAL/Methylation/intres.rds")
+    # tmi_goodlam.test <- readRDS("lassoSSNAL/Methylation/goodlam_1000_methtest_forobjonly.rds")
+    # tmi_goodlam <- readRDS("lassoSSNAL/Methylation/goodlam_1000_meth_forobjonly.rds")
     r_ssnal_cv_df <- rbind(r_ssnal_cv_df, c(log_lam = tll, 
                                             mse = mean(tmi_rmd), 
                                             ciw = sd(tmi_rmd)/sqrt(2),
                                             nnz = round(mean(tmi_nnz))))
     colnames(r_ssnal_cv_df) <- c("log_lam","mse", "ciw", "nnz")
-    glmnet_cv_obj <- readRDS(paste0("working/UCI/",nama,"/", nama, "_glmnet", num, "_mse.rds"))
-    glmnet_nnz <- readRDS(paste0("working/UCI/",nama,"/", nama, "_glmnet", num, "_nnz.rds"))
-    # glmnet_cv_obj <- read.csv(paste0("working/", nama,"/",nama, "_glmnet", which(grid==i), "_mse.csv"))
-    # glmnet_nnz <- read.csv(paste0("working/", nama,"/",nama,"_glmnet", which(grid==i), "_nnz.csv"))
+    glmnet_cv_obj <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama, "_glmnet", num, "_mse.rds"))
+    glmnet_nnz <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama, "_glmnet", num, "_nnz.rds"))
+    # glmnet_cv_obj <- read.csv(paste0("lassoSSNAL/", nama,"/",nama, "_glmnet", which(grid==i), "_mse.csv"))
+    # glmnet_nnz <- read.csv(paste0("lassoSSNAL/", nama,"/",nama,"_glmnet", which(grid==i), "_nnz.csv"))
     
     glm_cv_df <- rbind(glm_cv_df, c(log_lam = tll, 
                                     mse = mean(glmnet_cv_obj), 
@@ -317,14 +267,14 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
   #   theme_light() + scale_color_manual(values=c("blue", "red")) +
   #   theme(plot.title = element_text(hjust = 0.5), legend.position="none") 
   # 
-  # ggsave(filename=paste0("working/Methylation/predict.png"), plot=last_plot())
+  # ggsave(filename=paste0("lassoSSNAL/Methylation/predict.png"), plot=last_plot())
   
   
   ggplot(ggpdf,aes(x=ll,y=mse_ssnal))+
     geom_point(aes(x=ll,y=mse_ssnal),size=2.2,col='blue')+
     geom_point(aes(x=ll,y=mse_glm),size=2.2,col='red')+theme_light()
   
-  # tmi_rmd <- readRDS("working/Methylation/resobjs.rds")
+  # tmi_rmd <- readRDS("lassoSSNAL/Methylation/resobjs.rds")
   # tmi_rmd <- arrange(tmi_rmd, mult)
   # ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),grp=factor(20),cl=factor(20))
   ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),ciw=numeric(20),nnz=numeric(20),grp=factor(20),cl=factor(20))
@@ -357,7 +307,6 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
           axis.text = element_text(size=15),
           axis.title = element_text(size = 25)) 
   
-  # ggsave(filename=paste0("working/Methylation/objval.png"), plot=last_plot())
-  ggsave(filename=paste0("working/UCI/", nama,".png"), plot=last_plot())
+  # ggsave(filename=paste0("lassoSSNAL/Methylation/objval.png"), plot=last_plot())
+  ggsave(filename=paste0("lassoSSNAL/UCI/", nama,".png"), plot=last_plot())
 }
->>>>>>> Stashed changes
