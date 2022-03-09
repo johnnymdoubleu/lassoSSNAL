@@ -19,12 +19,12 @@ sourceCpp("lassoSSNAL/mex_matrix_mult.cpp")
 sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 
-data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #lassoSSNAL
+# data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #lassoSSNAL
 # data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")      #lassoSSNAL
 # data <- read.mat("UCIdata/housing_scale_expanded7.mat")    #lassoSSNAL
-# data <- read.mat("UCIdata/triazines_scale_expanded4.mat")  #lassoSSNAL
+data <- read.mat("UCIdata/triazines_scale_expanded4.mat")  #lassoSSNAL
 # data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #lassoSSNAL
 
 
@@ -116,7 +116,7 @@ gmem<-split(nx,nx%%levels)
 nama <- "triazines4"
 grid <- 10^seq(-14/3, -2, length = 10) * max(abs(t(t(b) %*% A)))
 saveRDS(grid, paste0("lassoSSNAL/UCI/",nama,"/", nama, "_lambda.rds"))
-for (i in grid){
+for (i in grid[2:10]){
   mses.ssnal <- mses.glm <- objs.ssnal <- objs.glm <- nnzs.ssnal <- nnzs.glm <- c()
   cat("\n\nNow doing rho value", i,"\n\n\n\n\n\n\n\n")
   for(test_gi in c(1:2)) {
@@ -195,30 +195,29 @@ for (i in grid){
   # write.csv(objs.ssnal, paste0("lassoSSNAL/", nama,"/",nama, "_ssnal", which(grid==i), "_obj.csv"))
   # write.csv(objs.glm, paste0("lassoSSNAL/", nama,"/",nama, "_glmnet", which(grid==i), "_obj.csv"))
 }
-# 
-# tmi_rmd <- readRDS(paste0("lassoSSNAL/", nama, "_ssnal", 1, "_mse.rds"))
+
 
 for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazines4")){
   nama <- j
   r_ssnal_cv_df <- data.frame(log_lam=numeric(),mse=numeric(), ciw=numeric(),nnz=numeric())
   glm_cv_df <- data.frame(log_lam=numeric(),mse=numeric(),ciw=numeric(), nnz=numeric())
   each.lambda <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama, "_lambda.rds"))
-  
+
   for (i in each.lambda) {
     tll <- log(i)
     num <- which(each.lambda==i)
     tmi_rmd <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama, "_ssnal", num, "_mse.rds"))
     tmi_nnz <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama,  "_ssnal", num, "_nnz.rds"))
-    
+
     # tmi_rmd <- read.csv(paste0("lassoSSNAL/", nama,"/",nama, "_ssnal", num, "_mse.csv"))
     # tmi_nnz <- read.csv(paste0("lassoSSNAL/", nama,"/",nama,  "_ssnal", num, "_nnz.csv"))
-    
+
     # tmi_rmd <- readRDS("lassoSSNAL/Methylation/resobjs.rds")
     # tmi_intres <- readRDS("lassoSSNAL/Methylation/intres.rds")
     # tmi_goodlam.test <- readRDS("lassoSSNAL/Methylation/goodlam_1000_methtest_forobjonly.rds")
     # tmi_goodlam <- readRDS("lassoSSNAL/Methylation/goodlam_1000_meth_forobjonly.rds")
-    r_ssnal_cv_df <- rbind(r_ssnal_cv_df, c(log_lam = tll, 
-                                            mse = mean(tmi_rmd), 
+    r_ssnal_cv_df <- rbind(r_ssnal_cv_df, c(log_lam = tll,
+                                            mse = mean(tmi_rmd),
                                             ciw = sd(tmi_rmd)/sqrt(2),
                                             nnz = round(mean(tmi_nnz))))
     colnames(r_ssnal_cv_df) <- c("log_lam","mse", "ciw", "nnz")
@@ -226,9 +225,9 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
     glmnet_nnz <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama, "_glmnet", num, "_nnz.rds"))
     # glmnet_cv_obj <- read.csv(paste0("lassoSSNAL/", nama,"/",nama, "_glmnet", which(grid==i), "_mse.csv"))
     # glmnet_nnz <- read.csv(paste0("lassoSSNAL/", nama,"/",nama,"_glmnet", which(grid==i), "_nnz.csv"))
-    
-    glm_cv_df <- rbind(glm_cv_df, c(log_lam = tll, 
-                                    mse = mean(glmnet_cv_obj), 
+
+    glm_cv_df <- rbind(glm_cv_df, c(log_lam = tll,
+                                    mse = mean(glmnet_cv_obj),
                                     ciw = sd(glmnet_cv_obj)/sqrt(2),
                                     nnz = round(mean(glmnet_nnz))))
     colnames(glm_cv_df) <- c("log_lam", "mse", "ciw", "nnz")
@@ -241,7 +240,7 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
                       mse_glm=glm_cv_df$mse,
                       ciw_glm=glm_cv_df$ciw,
                       nnz_glm=glm_cv_df$nnz)
-  
+
   ggpdf["mse_ssnal"] <- r_ssnal_cv_df$mse
   ggpdf["ciw_ssnal"] <- r_ssnal_cv_df$ciw
   ggpdf["nnz_ssnal"] <- r_ssnal_cv_df$nnz
@@ -249,14 +248,14 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
   ggpdf["ciw_glm"] <- glm_cv_df$ciw
   ggpdf["nnz_glm"] <- glm_cv_df$nnz
   ggpdf[ggpdf==0] <- NA
-  
-  
+
+
   # plot(A%*%coef(test)[-1],b)
   # plot(predict(tmi_goodlam,A),b)
   # plot(A %*% tmi_goodlam$x, b)
-   
+
   # preddata <- data.frame(x=A%*%tmi_goodlam$x, y = b)
-  # 
+  #
   # ggplot(preddata, aes(x=x, y = y))+
   #   geom_point(shape=1, size=2.2)+ geom_smooth(method=lm, se=FALSE, color="grey")
   #   labs(x="Predicted Age", y="Actual Age") +
@@ -264,23 +263,23 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
   #   theme(plot.title = element_text(hjust = 0.5), legend.position="none",
   #         axis.text = element_text(size= 17),
   #         axis.title = element_text(size = 17))
-  # 
+  #
   # ggsave(filename=paste0("lassoSSNAL/Methylation/predict.png"), plot=last_plot())
-  
-  
+
+
   ggplot(ggpdf,aes(x=ll,y=mse_ssnal))+
     geom_point(aes(x=ll,y=mse_ssnal),size=2.2,col='blue')+
     geom_point(aes(x=ll,y=mse_glm),size=2.2,col='red')+theme_light()
-  
+
   # tmi_rmd <- readRDS("lassoSSNAL/Methylation/resobjs.rds")
   # tmi_rmd <- arrange(tmi_rmd, mult)
-  
+
   # ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),grp=factor(20),cl=factor(20))
   # ggpdf2[1:10,'ll'] <- log(tmi_rmd["mult"]*0.04186) - log(656)
   # ggpdf2[11:20,'ll'] <- log(tmi_rmd["mult"]*0.04186) - log(656)
   # ggpdf2[1:10,'mse'] <- tmi_rmd["glmnet"]
   # ggpdf2[11:20,'mse'] <- tmi_rmd["ssnal"]
-  
+
   ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),ciw=numeric(20),nnz=numeric(20),grp=factor(20),cl=factor(20))
   ggpdf2[1:10,'ll'] <- glm_cv_df$log_lam
   ggpdf2[11:20,'ll'] <- glm_cv_df$log_lam
@@ -293,20 +292,20 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
   ggpdf2[,"nnz"] <- round(ggpdf2[,"nnz"])
   ggpdf2$grp <- c(rep('glmnet',10),rep('ssnal',10))
   ggpdf2$cl <- c(rep('red',10),rep('blue ',10))
-  
+
   ggplot(ggpdf2,aes(x = ll,y = mse, group = grp, color = grp))+
     geom_point(size=2.2) +
-    # geom_errorbar(aes(ymin = mse-ciw, ymax = mse+ciw), width = .2)+
-    # geom_text(aes(label = nnz), position = position_dodge(width = 1),
-              # check_overlap = FALSE, size = 4) +
-    ggtitle("Objective Values") +
-    labs(x="log(\u03bb)", y="Objective") +
-    # labs(x="log(\u03bb)", y="Mean-squared Error") +
+    geom_errorbar(aes(ymin = mse-ciw, ymax = mse+ciw), width = .2)+
+    geom_text(aes(label = nnz), position = position_dodge(width = 1),
+              check_overlap = FALSE, size = 4) +
+    # ggtitle("Objective Values") +
+    # labs(x="log(\u03bb)", y="Objective") +
+    labs(x="log(\u03bb)", y="Mean-squared Error") +
     theme_light() + scale_color_manual(values=c("blue", "red")) +
     theme(plot.title = element_text(hjust = 0.5, size = 20), legend.position="none",
           axis.text = element_text(size= 17),
-          axis.title = element_text(size = 17)) 
-  
+          axis.title = element_text(size = 17))
+
   ggsave(filename=paste0("lassoSSNAL/Methylation/objval.png"), plot=last_plot())
   # ggsave(filename=paste0("lassoSSNAL/UCI/", nama,".png"), plot=last_plot())
 }
