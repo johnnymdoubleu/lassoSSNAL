@@ -112,7 +112,7 @@ nx<-sample(1:nrow(A))
 levels<-2
 gmem<-split(nx,nx%%levels)
 
-nama <- "mpg7"
+nama <- "triazines4"
 grid <- 10^seq(-14/3, -2, length = 10) * max(abs(t(t(b) %*% A)))
 saveRDS(grid, paste0("lassoSSNAL/UCI/",nama,"/", nama, "_lambda.rds"))
 for (i in grid){
@@ -206,16 +206,16 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
   for (i in each.lambda) {
     tll <- log(i)
     num <- which(each.lambda==i)
-    # tmi_rmd <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama, "_ssnal", num, "_mse.rds"))
-    # tmi_nnz <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama,  "_ssnal", num, "_nnz.rds"))
+    tmi_rmd <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama, "_ssnal", num, "_mse.rds"))
+    tmi_nnz <- readRDS(paste0("lassoSSNAL/UCI/",nama,"/", nama,  "_ssnal", num, "_nnz.rds"))
     
     # tmi_rmd <- read.csv(paste0("lassoSSNAL/", nama,"/",nama, "_ssnal", num, "_mse.csv"))
     # tmi_nnz <- read.csv(paste0("lassoSSNAL/", nama,"/",nama,  "_ssnal", num, "_nnz.csv"))
     
-    tmi_rmd <- readRDS("lassoSSNAL/Methylation/resobjs.rds")
+    # tmi_rmd <- readRDS("lassoSSNAL/Methylation/resobjs.rds")
     # tmi_intres <- readRDS("lassoSSNAL/Methylation/intres.rds")
-    tmi_goodlam.test <- readRDS("lassoSSNAL/Methylation/goodlam_1000_methtest_forobjonly.rds")
-    tmi_goodlam <- readRDS("lassoSSNAL/Methylation/goodlam_1000_meth_forobjonly.rds")
+    # tmi_goodlam.test <- readRDS("lassoSSNAL/Methylation/goodlam_1000_methtest_forobjonly.rds")
+    # tmi_goodlam <- readRDS("lassoSSNAL/Methylation/goodlam_1000_meth_forobjonly.rds")
     r_ssnal_cv_df <- rbind(r_ssnal_cv_df, c(log_lam = tll, 
                                             mse = mean(tmi_rmd), 
                                             ciw = sd(tmi_rmd)/sqrt(2),
@@ -253,21 +253,16 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
   # plot(A%*%coef(test)[-1],b)
   # plot(predict(tmi_goodlam,A),b)
   # plot(A %*% tmi_goodlam$x, b)
-  # 
+   
   # preddata <- data.frame(x=A%*%tmi_goodlam$x, y = b)
   # 
   # ggplot(preddata, aes(x=x, y = y))+
-  #   geom_point(shape=1, size=2.2)+ geom_smooth(method=lm, se=FALSE, color="grey") +
-  #   # geom_errorbar(aes(ymin=mse-ciw, ymax=mse+ciw), width=.2)+
-  #   # geom_text(aes(label = nnz), position = position_dodge(width = 1),
-  #   # check_overlap = TRUE) +
-  #   # ggtitle("Objective Values") +
+  #   geom_point(shape=1, size=2.2)+ geom_smooth(method=lm, se=FALSE, color="grey")
   #   labs(x="Predicted Age", y="Actual Age") +
-  #   # labs(x="log(\u03bb)", y="Mean-squared Error") +
   #   theme_light() + scale_color_manual(values=c("blue", "red")) +
   #   theme(plot.title = element_text(hjust = 0.5), legend.position="none",
-  #         axis.text = element_text(size= 25),
-  #         axis.title = element_text(size = 25))
+  #         axis.text = element_text(size= 17),
+  #         axis.title = element_text(size = 17))
   # 
   # ggsave(filename=paste0("lassoSSNAL/Methylation/predict.png"), plot=last_plot())
   
@@ -276,24 +271,25 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
     geom_point(aes(x=ll,y=mse_ssnal),size=2.2,col='blue')+
     geom_point(aes(x=ll,y=mse_glm),size=2.2,col='red')+theme_light()
   
-  tmi_rmd <- readRDS("lassoSSNAL/Methylation/resobjs.rds")
-  tmi_rmd <- arrange(tmi_rmd, mult)
-  ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),grp=factor(20),cl=factor(20))
-  # ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),ciw=numeric(20),nnz=numeric(20),grp=factor(20),cl=factor(20))
-  ggpdf2[1:10,'ll'] <- log(tmi_rmd["mult"]*0.04186) - log(656)
-  ggpdf2[11:20,'ll'] <- log(tmi_rmd["mult"]*0.04186) - log(656)
-  ggpdf2[1:10,'mse'] <- tmi_rmd["glmnet"]
-  ggpdf2[11:20,'mse'] <- tmi_rmd["ssnal"]
+  # tmi_rmd <- readRDS("lassoSSNAL/Methylation/resobjs.rds")
+  # tmi_rmd <- arrange(tmi_rmd, mult)
   
-  # ggpdf2[1:10,'ll'] <- glm_cv_df$log_lam
-  # ggpdf2[11:20,'ll'] <- glm_cv_df$log_lam
-  # ggpdf2[1:10,'mse'] <- ggpdf[,'mse_glm']
-  # ggpdf2[11:20,'mse'] <- ggpdf[,'mse_ssnal']
-  # ggpdf2[1:10,'ciw'] <- ggpdf[,'ciw_glm']
-  # ggpdf2[11:20,'ciw'] <- ggpdf[,'ciw_ssnal']
-  # ggpdf2[1:10,'nnz'] <- ggpdf[,'nnz_glm']
-  # ggpdf2[11:20,'nnz'] <- ggpdf[,'nnz_ssnal']
-  # ggpdf2[,"nnz"] <- round(ggpdf2[,"nnz"])
+  # ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),grp=factor(20),cl=factor(20))
+  # ggpdf2[1:10,'ll'] <- log(tmi_rmd["mult"]*0.04186) - log(656)
+  # ggpdf2[11:20,'ll'] <- log(tmi_rmd["mult"]*0.04186) - log(656)
+  # ggpdf2[1:10,'mse'] <- tmi_rmd["glmnet"]
+  # ggpdf2[11:20,'mse'] <- tmi_rmd["ssnal"]
+  
+  ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),ciw=numeric(20),nnz=numeric(20),grp=factor(20),cl=factor(20))
+  ggpdf2[1:10,'ll'] <- glm_cv_df$log_lam
+  ggpdf2[11:20,'ll'] <- glm_cv_df$log_lam
+  ggpdf2[1:10,'mse'] <- ggpdf[,'mse_glm']
+  ggpdf2[11:20,'mse'] <- ggpdf[,'mse_ssnal']
+  ggpdf2[1:10,'ciw'] <- ggpdf[,'ciw_glm']
+  ggpdf2[11:20,'ciw'] <- ggpdf[,'ciw_ssnal']
+  ggpdf2[1:10,'nnz'] <- ggpdf[,'nnz_glm']
+  ggpdf2[11:20,'nnz'] <- ggpdf[,'nnz_ssnal']
+  ggpdf2[,"nnz"] <- round(ggpdf2[,"nnz"])
   ggpdf2$grp <- c(rep('glmnet',10),rep('ssnal',10))
   ggpdf2$cl <- c(rep('red',10),rep('blue ',10))
   
@@ -307,8 +303,8 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
     # labs(x="log(\u03bb)", y="Mean-squared Error") +
     theme_light() + scale_color_manual(values=c("blue", "red")) +
     theme(plot.title = element_text(hjust = 0.5, size = 20), legend.position="none",
-          axis.text = element_text(size= 25),
-          axis.title = element_text(size = 25)) 
+          axis.text = element_text(size= 17),
+          axis.title = element_text(size = 17)) 
   
   ggsave(filename=paste0("lassoSSNAL/Methylation/objval.png"), plot=last_plot())
   # ggsave(filename=paste0("lassoSSNAL/UCI/", nama,".png"), plot=last_plot())
