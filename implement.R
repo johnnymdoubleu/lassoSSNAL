@@ -19,7 +19,7 @@ sourceCpp("lassoSSNAL/mex_matrix_mult.cpp")
 sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 
-# data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #lassoSSNAL
+data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #lassoSSNAL
 # data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")      #lassoSSNAL
@@ -27,12 +27,13 @@ sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
 # data <- read.mat("UCIdata/triazines_scale_expanded4.mat")  #lassoSSNAL
 # data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #lassoSSNAL
 
-##############################################
-A <- read_delim("UCIdata/GSE40279_average_beta.txt", "\t", col_names = TRUE)
-A[,1] <- NULL
-A <- as.matrix(A)
-b <- as.vector(read.csv("UCIdata/sample.csv", header=FALSE)[,3])
-A <- t(A)              #only for methylation
+
+########## Only for Methylation ##############
+# A <- read_delim("UCIdata/GSE40279_average_beta.txt", "\t", col_names = TRUE)
+# A[,1] <- NULL
+# A <- as.matrix(A)
+# b <- as.vector(read.csv("UCIdata/sample.csv", header=FALSE)[,3])
+# A <- t(A)              
 ##############################################
 
 
