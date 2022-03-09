@@ -229,7 +229,11 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     ### CHECK FOR STAGNATION LINE 161 GitHub code
     #%% check for stagnation
     if (itersub > 4) {
+<<<<<<< Updated upstream
       idx <- seq(max(1, itersub - 3), itersub)
+=======
+      idx <- seq(max(1, itersub - 3) : itersub)
+>>>>>>> Stashed changes
       tmp <- runhist$priminf[idx]
       ratio <- min(tmp) / max(tmp)
       if ((all(runhist$solve_ok[idx] <= -1)) & (ratio > 0.9)  
@@ -239,13 +243,17 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       }
       const3 <- 0.7
       priminf_1half <- min(runhist$priminf[1:ceil(itersub * const3)])
-      priminf_2half <- min(runhist$priminf[ceil(itersub * const3) + 1:itersub])
+      priminf_2half <- min(runhist$priminf[(ceil(itersub * const3)+1):itersub])
       priminf_best <- min(runhist$priminf[1:itersub-1])
       priminf_ratio <- runhist$priminf[itersub] / runhist$priminf[itersub-1]
       dualinf_ratio <- runhist$dualinf[itersub] / runhist$dualinf[itersub-1]
       stagnate_idx <- which(runhist$solve_ok[1:itersub] <= -1)
       stagnate_count <- length(stagnate_idx)
+<<<<<<< Updated upstream
       idx2 <- seq(max(1, itersub - 7), itersub)
+=======
+      idx2 <- seq(max(1, itersub - 7): itersub)
+>>>>>>> Stashed changes
       
       if ((itersub >= 10) & all(runhist$solve_ok[idx2] == -1)  
           & (priminf_best < 1e-2) & (dualinf_sub < 1e-3) ) {                   
@@ -257,9 +265,9 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
         }
       }
       
-      if ((itersub >= 15) & (priminf_1half < min(2e-3, priminf_2half)) 
-          & (dualinf_sub < 0.8 * runhist$dualinf[1]) & (dualinf_sub < 1e-3) 
-          & (stagnate_count >= 3) ) {
+      if ((itersub >= 15) & (priminf_1half < min(2e-3, priminf_2half)) & 
+          (dualinf_sub < 0.8 * runhist$dualinf[1]) & (dualinf_sub < 1e-3) & 
+          (stagnate_count >= 3)){
         #if (printsub); fprintf('###'); end
         breakyes <- 3
       }
@@ -274,21 +282,24 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
         breakyes <- 4
       }
       
+<<<<<<< Updated upstream
       if ((itersub >=10) & (dualinf_sub > 5*min(runhist$dualinf)) 
+=======
+      if ((itersub >=10) & (dualinf_sub > 5 * min(runhist$dualinf)) 
+>>>>>>> Stashed changes
           & (priminf_sub > 2 * min(runhist$priminf))) {
         #if (printsub); fprintf('$$$'); end
         breakyes <- 5
       }
       
       if (itersub >= 20) {
-        
         dualinf_ratioall <- runhist$dualinf[2:itersub] / 
           runhist$dualinf[1:itersub-1]
         idx <- which(dualinf_ratioall > 1) 
         if (length(idx) >= 3) {
           dualinf_increment <- mean(dualinf_ratioall[idx])
           if (dualinf_increment > 1.25) {
-            breakyes <- 6;                            
+            breakyes <- 6             
           }                    
         }              
       }
