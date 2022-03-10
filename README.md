@@ -66,10 +66,10 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites & Installation</a></li>
-        <li><a href="#installation">Code Sample</a></li>
+        <!--li><a href="#installation">Code Sample</a></li-->
       </ul>
     </li>
-    <!--li><a href="#usage">Usage</a></li-->
+    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -115,19 +115,21 @@ To get a local copy up and running follow these simple example steps.
 This is an example of how to list things you need to use the software and how to install them.
 * Required Packages to run the algorithm
   - [pracma](https://github.com/cran/pracma)
-  - [rmatio]()
-  - Rcpp
-  - RSpectra  
+  - [rmatio](https://github.com/stewid/rmatio)
+  - [Rcpp](https://github.com/RcppCore/Rcpp)
+  - [RSpectra](https://github.com/yixuan/RSpectra)
   ```R
   install.packages("pracma")
   install.packages("rmatio")
   install.packages("Rcpp")
   install.packages("RSpectra")
   ```
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-### Code Sample
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+
+<!-- USAGE EXAMPLES -->
+## Usage
 
 1. Clone the repo
    ```sh
@@ -161,8 +163,8 @@ _Below is an example of how you can instruct your audience on installing and set
    A <- data$A
    b <- data$b
    ```
-6.  Define necessary arguments for the function
-   ```
+6. Define necessary arguments for the function
+   ```R
    eps <- 2.220446e-16 # Copy the MATLAB eps essentially
    n <- ncol(A)
    c <- 10^(-4) # 10^(-3)
@@ -180,7 +182,7 @@ _Below is an example of how you can instruct your audience on installing and set
    opts$maxiter <- 1000
    ```
 7. Execute the SSNAL algorithm with profiling
-   ```
+   ```R
    Rprof()
    clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts)
    Rprof(NULL)
@@ -191,16 +193,6 @@ _Below is an example of how you can instruct your audience on installing and set
    cat("max(X) = ", clo$info$max, "\n")
    cat("nnz = ", findnnz(clo$info$x,0.999)$k, "\n")
    ```
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
