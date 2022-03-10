@@ -69,7 +69,7 @@
         <li><a href="#installation">Code Sample</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
+    <!--li><a href="#usage">Usage</a></li-->
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -85,11 +85,11 @@
 
 <!--[![Product Name Screen Shot][product-screenshot]](https://example.com)-->
 
-Lasso (Least Absolute Shrinkage and Selection Operator) is a popular and widely used regression method that does linear regression and variable selection in the field of statistics and machine learning. We initiated this project as final year project at University of Edinbrugh. In this project, we aim to present an inexact Semismooth Newton augmented Lagrangian method to solve Lasso problems. With the advantage of the second order sparsity of the problem, we can reduce the expensive computational cost and yield a fast and highly efficient algorithm that was first developed by [(Li et al. 2018)](https://arxiv.org/abs/1607.05428).
+Lasso (Least Absolute Shrinkage and Selection Operator) is a popular and widely used regression method that does linear regression and variable selection in the field of statistics and machine learning. As a final year student at University of Edinbrugh (Myung Won Lee and Michael Renfrew), we initiated this as our final year project supervised by Dr. Daniel Paulin. In this project, we aim to present an inexact Semismooth Newton augmented Lagrangian method to solve Lasso problems. With the advantage of the second order sparsity of the problem, we can reduce the expensive computational cost and yield a fast and highly efficient algorithm that was first developed by [(Li et al. 2018)](https://arxiv.org/abs/1607.05428).
 
-The algorithm was first developed in **Matlab** and named [Suitelasso](https://github.com/MatOpt/SuiteLasso). We benchmarked the original code and built an R package to aid the majority of statisticians who actively use **R** in their research.
+The algorithm was first developed in **Matlab** and named [Suitelasso](https://github.com/MatOpt/SuiteLasso). We benchmarked the original software and built an R package to aid the majority of statisticians who actively use **R** in their research.
 
-Currently, the project has not been published to CRAN at the moment but we aim to publish in the near future.
+*Currently, the project has not been published to CRAN at the moment but we aim to publish in the near future.*
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -97,7 +97,7 @@ Currently, the project has not been published to CRAN at the moment but we aim t
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+This package is mainly built in **R** with the aid of **C++*.
 * [R](https://www.r-project.org/)
 * [C++](https://docs.microsoft.com/en-us/cpp/cpp/?view=msvc-170)
 
@@ -108,35 +108,89 @@ This section should list any major frameworks/libraries used to bootstrap your p
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
 
-### Prerequisites
+### Prerequisites & Installation
 
 This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
+* Required Packages to run the algorithm
+  - [pracma](https://github.com/cran/pracma)
+  - [rmatio]()
+  - Rcpp
+  - RSpectra  
+  ```R
+  install.packages("pracma")
+  install.packages("rmatio")
+  install.packages("Rcpp")
+  install.packages("RSpectra")
   ```
 
-### Installation
+### Code Sample
 
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
-   git clone https://github.com/your_username_/Project-Name.git
+   git clone https://github.com/johnnymdoubleu/lassoSSNAL.git
    ```
-3. Install NPM packages
-   ```sh
-   npm install
+2. Run R GUI / RStudio in the directory lassoSSNAL
+3. Install / Load required packages
+   ```R
+   library(rmatio) 
+   library(Rcpp) 
+   library(RSpectra)
+   library(Matrix)
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
+4. Source **R** and **C++** files
+   ```R
+   source("Classic_Lasso_SSNAL.R")
+   source("Classic_Lasso_SSNAL_main.R")
+   source("Classic_Lasso_SSNCG.R")
+   source("proj_inf.R")
+   source("linsyssolve.R")
+   source("findstep.R")
+   source("psqmry.R")
+   source("matvec_ClassicLasso.R")
+   source("findnnz.R")
+   sourceCpp("mex_matrix_mult.cpp")
+   sourceCpp("mexsigma_update_classic_Lasso_SSNAL.cpp")
    ```
-
+5. Define matrix/vector containing response and explanatory vairable by loading data
+   ```R
+   data <- read.mat("UCIdata/abalone_scale_expanded7.mat")
+   A <- data$A
+   b <- data$b
+   ```
+6.  Define necessary arguments for the function
+   ```
+   eps <- 2.220446e-16 # Copy the MATLAB eps essentially
+   n <- ncol(A)
+   c <- 10^(-4) # 10^(-3)
+   rho <- c * max(abs(t(t(b) %*% A)))
+   
+   # evaluate the Lipschitz condition
+   lipfun <- function(b, A){return(t(t(A%*%b) %*% A))}
+   eigs_AtA <- eigs_sym(lipfun, k = 1, n = n, args = A)
+   
+   # set running parameters for function
+   opts <- c()
+   opts$stoptol <- 1e-6
+   opts$Lip <- eigs_AtA$values
+   opts$Ascale <- 1
+   opts$maxiter <- 1000
+   ```
+7. Execute the SSNAL algorithm with profiling
+   ```
+   Rprof()
+   clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts)
+   Rprof(NULL)
+   summaryRprof()
+   
+   # portion of the output values
+   cat("min(X) = ", clo$info$minx, "\n")
+   cat("max(X) = ", clo$info$max, "\n")
+   cat("nnz = ", findnnz(clo$info$x,0.999)$k, "\n")
+   ```
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -156,7 +210,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 ## Roadmap
 
 - [x] Add Changelog
-- [x] Publish to CRAN
+- [ ] Publish to CRAN
 - [ ] Include Elastic Net 
 
 See the [open issues](https://github.com/johnnymdoubleu/lassoSSNAL/issues) for a full list of proposed features (and known issues).
@@ -174,9 +228,9 @@ If you have a suggestion that would make this better, please fork the repo and c
 Don't forget to give the project a star! Thanks again!
 
 1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+2. Create your Feature Branch (`git checkout -b r.ssnal/AmazingUpdate`)
+3. Commit your Changes (`git commit -m 'Add some AmazingUpdate'`)
+4. Push to the Branch (`git push origin feature/AmazingUpdata`)
 5. Open a Pull Request
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -186,7 +240,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the GNU General Public License v3.0. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -203,7 +257,7 @@ Project Link: [https://github.com/johnnymdoubleu/lassoSSNAL](https://github.com/
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
-The project was 
+We would like to express token of appreciation to our superviosr Dr. Daniel Paulin and our loved ones.
 
 
 While constructing this repository and readme file. We have reviewed the sources below.
