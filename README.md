@@ -29,23 +29,24 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <!--
+  <a href="https://github.com/johnnymdoubleu/lassoSSNAL">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
+  </a> -->
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">SSNAL Implementation in R</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    Semismooth Newton Augmented Lagrangian method implementation in R to solve Lasso problems
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/johnnymdoubleu/lassoSSNAL"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://github.com/johnnymdoubleu/lassoSSNAL/Best-README-Template">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/johnnymdoubleu/lassoSSNAL/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/johnnymdoubleu/lassoSSNAL/issues">Request Features</a>
   </p>
 </div>
 
@@ -64,8 +65,8 @@
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#prerequisites">Prerequisites & Installation</a></li>
+        <li><a href="#installation">Code Sample</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -82,7 +83,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+<!--[![Product Name Screen Shot][product-screenshot]](https://example.com)-->
 
 There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
 
@@ -214,16 +215,13 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
 
+
+
+While constructing this repository and readme file. We have reviewed the sources below.
 * [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
 * [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+* [Readme Template](https://github.com/othneildrew/Best-README-Template#top)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -231,7 +229,7 @@ Use this space to list resources you find helpful and would like to give credit 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/johnnymdoubleu/lassoSSNAL
+[contributors-shield]: https://img.shields.io/github/contributors/johnnymdoubleu/lassoSSNAL?color=light
 [contributors-url]: https://github.com/johnnymdoubleu/lassoSSNAL/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/johnnymdoubleu/lassoSSNAL
 [forks-url]: https://github.com/johnnymdoubleu/lassoSSNAL/network/members
@@ -241,6 +239,6 @@ Use this space to list resources you find helpful and would like to give credit 
 [issues-url]: https://github.com/johnnymdoubleu/lassoSSNAL/issues
 [license-shield]: https://img.shields.io/github/license/johnnymdoubleu/lassoSSNAL
 [license-url]: https://github.com/johnnymdoubleu/lassoSSNAL/blob/main/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/johnnymwlee/
 [product-screenshot]: images/screenshot.png
