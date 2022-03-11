@@ -262,7 +262,7 @@ While constructing this repository and readme file. We have reviewed the sources
    title     = {Semismooth Newton Augmneted Langrangian Method with Implementation in R},
    month     = {March},
    year      = {2022},
-   howpublished = {Bachelor Thesis},
+   howpublished = {Undergraduate Honors Thesis},
    school    = {University of Edinburgh},
    address   = {Edinburgh, United Kingdon}
    }
