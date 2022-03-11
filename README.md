@@ -259,7 +259,7 @@ While constructing this repository and readme file. We have reviewed the sources
 ```
 @thesis{Lee, Renfrew, thsis, 2022:rssnal,
    author    = {Lee, MyungWon and Renfrew, Michael},
-   title     = {Semismooth Newton Augmneted Lagrangian Method with Implementation in R},
+   title     = {Semismooth Newton Augmented Lagrangian Method with Implementation in R},
    month     = {March},
    year      = {2022},
    howpublished = {Undergraduate Honors Thesis},
