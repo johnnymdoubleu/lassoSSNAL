@@ -257,15 +257,14 @@ While constructing this repository and readme file. We have reviewed the sources
 * [Readme Template](https://github.com/othneildrew/Best-README-Template#top)
 
 ```
-@thesis{Lee, Renfrew, thsis, 2022:rssnal,
+@thesis{lee2022rssnal,
+   title     = {Semismooth Newton Augmented Lagrangian Method for Solving Lasso Problems with Implementation in R},
    author    = {Lee, MyungWon and Renfrew, Michael},
-   title     = {Semismooth Newton Augmented Lagrangian Method with Implementation in R},
-   month     = {March},
    year      = {2022},
-   howpublished = {Undergraduate Honors Thesis},
+   note      = {Undergraduate Honors Thesis},
    school    = {University of Edinburgh},
-   address   = {Edinburgh, United Kingdon}
-   }
+   address   = {Edinburgh, United Kingdom}
+}
 ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
