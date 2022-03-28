@@ -20,11 +20,11 @@ sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 
 # data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #lassoSSNAL
-# data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #lassoSSNAL
+data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #lassoSSNAL
 # data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")      #lassoSSNAL
 # data <- read.mat("UCIdata/housing_scale_expanded7.mat")    #lassoSSNAL
-data <- read.mat("UCIdata/triazines_scale_expanded4.mat")  #lassoSSNAL
+# data <- read.mat("UCIdata/triazines_scale_expanded4.mat")  #lassoSSNAL
 # data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #lassoSSNAL
 
 
@@ -274,13 +274,13 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
   # tmi_rmd <- readRDS("lassoSSNAL/Methylation/resobjs.rds")
   # tmi_rmd <- arrange(tmi_rmd, mult)
 
-  # ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),grp=factor(20),cl=factor(20))
+  # ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),grp=factor(20),Algorithm=factor(20))
   # ggpdf2[1:10,'ll'] <- log(tmi_rmd["mult"]*0.04186) - log(656)
   # ggpdf2[11:20,'ll'] <- log(tmi_rmd["mult"]*0.04186) - log(656)
   # ggpdf2[1:10,'mse'] <- tmi_rmd["glmnet"]
   # ggpdf2[11:20,'mse'] <- tmi_rmd["ssnal"]
 
-  ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),ciw=numeric(20),nnz=numeric(20),grp=factor(20),cl=factor(20))
+  ggpdf2<-data.frame(ll=numeric(20),mse=numeric(20),ciw=numeric(20),nnz=numeric(20),grp=factor(20),Algorithm=factor(20))
   ggpdf2[1:10,'ll'] <- glm_cv_df$log_lam
   ggpdf2[11:20,'ll'] <- glm_cv_df$log_lam
   ggpdf2[1:10,'mse'] <- ggpdf[,'mse_glm']
@@ -290,22 +290,22 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
   ggpdf2[1:10,'nnz'] <- ggpdf[,'nnz_glm']
   ggpdf2[11:20,'nnz'] <- ggpdf[,'nnz_ssnal']
   ggpdf2[,"nnz"] <- round(ggpdf2[,"nnz"])
-  ggpdf2$grp <- c(rep('glmnet',10),rep('ssnal',10))
-  ggpdf2$cl <- c(rep('red',10),rep('blue ',10))
-
-  ggplot(ggpdf2,aes(x = ll,y = mse, group = grp, color = grp))+
+  ggpdf2$grp <- c(rep('glmnet',10),rep('SSNAL',10))
+  ggpdf2$Algorithm <- c(rep('glmnet',10),rep('SSNAL',10))
+  
+  ggplot(ggpdf2,aes(x = ll,y = mse, group = grp, color = Algorithm))+
     geom_point(size=2.2) +
     geom_errorbar(aes(ymin = mse-ciw, ymax = mse+ciw), width = .2)+
     geom_text(aes(label = nnz), position = position_dodge(width = 1),
               check_overlap = FALSE, size = 4) +
     # ggtitle("Objective Values") +
     # labs(x="log(\u03bb)", y="Objective") +
-    labs(x="log(\u03bb)", y="Mean-squared Error") +
-    theme_light() + scale_color_manual(values=c("blue", "red")) +
+    labs(x="log(\u03bb)", y="CV Mean-squared Error") +
+    theme_light() + scale_color_manual(values=c("blue", "red"))
     theme(plot.title = element_text(hjust = 0.5, size = 20), legend.position="none",
-          axis.text = element_text(size= 17),
-          axis.title = element_text(size = 17))
+           axis.text = element_text(size= 17),
+           axis.title = element_text(size = 17))
 
-  ggsave(filename=paste0("lassoSSNAL/Methylation/objval.png"), plot=last_plot())
-  # ggsave(filename=paste0("lassoSSNAL/UCI/", nama,".png"), plot=last_plot())
+  # ggsave(filename=paste0("lassoSSNAL/Methylation/objval.png"), plot=last_plot())
+  ggsave(filename=paste0("lassoSSNAL/UCI/", nama,".png"), plot=last_plot())
 }
