@@ -301,10 +301,10 @@ for (j in c("abalone7","bodyfat7","housing7","mpg7","pyrim5","space_ga9","triazi
     # ggtitle("Objective Values") +
     # labs(x="log(\u03bb)", y="Objective") +
     labs(x="log(\u03bb)", y="CV Mean-squared Error") +
-    theme_light() + scale_color_manual(values=c("blue", "red"))
+    theme_light() + scale_color_manual(values=c("blue", "red")) +
     theme(plot.title = element_text(hjust = 0.5, size = 20), legend.position="none",
-           axis.text = element_text(size= 17),
-           axis.title = element_text(size = 17))
+          axis.text = element_text(size= 17),
+          axis.title = element_text(size = 17))
 
   # ggsave(filename=paste0("lassoSSNAL/Methylation/objval.png"), plot=last_plot())
   ggsave(filename=paste0("lassoSSNAL/UCI/", nama,".png"), plot=last_plot())
