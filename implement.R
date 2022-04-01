@@ -31,7 +31,6 @@ lipfun <- function(b, A){
   return(t(t(A%*%b) %*% A))
 }
 
-
 A <- data$A
 b <- data$b
 
