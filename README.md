@@ -261,7 +261,7 @@ While constructing this repository and readme file. We have reviewed the sources
    title     = {Semismooth Newton Augmented Lagrangian Method for Solving Lasso Problems with Implementation in R},
    author    = {Lee, MyungWon and Renfrew, Michael},
    year      = {2022},
-   note      = {Undergraduate Honors Thesis},
+   note      = {Undergraduate Honours Thesis},
    school    = {University of Edinburgh},
    address   = {Edinburgh, United Kingdom}
 }
