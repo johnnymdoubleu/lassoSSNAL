@@ -97,7 +97,7 @@ The algorithm was first developed in **Matlab** and named [Suitelasso](https://g
 
 ### Built With
 
-This package is mainly built in **R** with the aid of **C++*.
+This package is mainly built in **R** with the aid of **C++**.
 * [R](https://www.r-project.org/)
 * [C++](https://docs.microsoft.com/en-us/cpp/cpp/?view=msvc-170)
 
