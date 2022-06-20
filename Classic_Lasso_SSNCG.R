@@ -115,10 +115,14 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     } else if (dualinf_sub > 5e-6) {
       maxitpsqmr <- max(maxitpsqmr, 500) 
     }
-  
+    
     if (itersub > 1) {
       prim_ratio <- priminf_sub / runhist$priminf[itersub - 1]
       dual_ratio <- dualinf_sub / runhist$dualinf[itersub - 1]
+      if (is.nan(dual_ratio)) {
+        prim_ratio <- 0
+        dual_ratio <- 0
+      }
     } else {
       prim_ratio <- 0
       dual_ratio <- 0
@@ -141,7 +145,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       const2 <- 0.5 * const2
     }
     
-    
+    print(dualinf_sub)
+    print(runhist$dualinf[itersub - 1])
     if (dual_ratio > 1.1){
       const2 <- 0.5 * const2
     }

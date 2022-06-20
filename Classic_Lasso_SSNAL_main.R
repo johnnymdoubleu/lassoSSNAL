@@ -391,8 +391,8 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       dual_win <- dual_win + 1
     }
     
-    cat("prim_win=",prim_win,"\n")
-    cat("dual_win=",dual_win,"\n")
+    cat("prim_win=", prim_win, "\n")
+    cat("dual_win=", dual_win, "\n")
     
     msuout <- mexsigma_update(sigma, sigmamax, sigmamin, prim_win, dual_win, iter, info_NCG$breakyes)
     

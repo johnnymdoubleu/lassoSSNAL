@@ -50,7 +50,7 @@ opts$Ascale <- 1
 # opts$maxiter <- 10
 
 output.list <- matrix(nrow=9, ncol=10)
-grid <- 10^seq(-5, -0.1, length = 10)
+grid <- 10^seq(-5, 0, length = 10)
 for(lambda in grid) {
   rho <- lambda * maxA
   Rprof()
@@ -72,6 +72,7 @@ for(lambda in grid) {
 }
 
 row.names(output.list) <- row.names(do.call(rbind, warmstart.list))
+options(scipen = 10)
 output.list
 cat("Lowest Objective Value = ", min(output.list[4,]), "\n", 
     "lambda value = ", grid[which(output.list[4,]==min(output.list[4,]))], "\n")
