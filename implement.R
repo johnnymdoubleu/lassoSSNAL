@@ -19,13 +19,13 @@ sourceCpp("folder/mex_matrix_mult.cpp")
 sourceCpp("folder/mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 
-data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #lassoSSNAL
+# data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #lassoSSNAL
 # data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")      #lassoSSNAL
 # data <- read.mat("UCIdata/housing_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/triazines_scale_expanded4.mat")  #lassoSSNAL
-# data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #lassoSSNAL
+data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #lassoSSNAL
 
 lipfun <- function(b, A){
   return(t(t(A%*%b) %*% A))
@@ -55,7 +55,7 @@ opts$Ascale <- 1
 Rprof()
 clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts)
 Rprof(NULL)
-summaryRprof()
+# summaryRprof()
 print("-------------------------")
 cat("min(X) = ", clo$info$minx, "\n")
 cat("max(X) = ", clo$info$max, "\n")

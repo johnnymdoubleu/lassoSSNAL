@@ -74,8 +74,10 @@ for(lambda in grid) {
 row.names(output.list) <- row.names(do.call(rbind, warmstart.list))
 options(scipen = 10)
 output.list
+options(scipen = 0)
 cat("Lowest Objective Value = ", min(output.list[4,]), "\n", 
     "lambda value = ", grid[which(output.list[4,]==min(output.list[4,]))], "\n")
+
 # cat("Primal Objective Value = ", clo$obj[1], "\n")
 # cat("Dual Objective Value = ", clo$obj[2], "\n")
 # cat("min(X) = ", clo$info$minx, "\n")
