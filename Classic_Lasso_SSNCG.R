@@ -49,9 +49,6 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
   cnt_pAATmap <- 0
   cnt_fAATmap <- 0
   
-  
-  
-  
   for (itersub in seq(1, maxitersub)) {    
     yold <- y
     xiold <- xi
@@ -104,8 +101,6 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     #%% Compute Newton direction
     #%% precond = 0, 
     
-    
-    
     par$epsilon <- min(1e-3, 0.1 * normGradLxi) #%% good to add
     par$precond <- precond
     if(precond == 1) {
@@ -145,6 +140,7 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
         (prim_ratio > 0.5 | priminf_sub > 0.1 * runhist$priminf[1])){
       const2 <- 0.5 * const2
     }
+    
     
     if (dual_ratio > 1.1){
       const2 <- 0.5 * const2

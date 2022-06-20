@@ -255,6 +255,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
     maxfeas <- max(primfeas, dualfeas)
     maxfeasorg <- max(primfeasorg, dualfeasorg)
     
+    cat("itersub=",info_NCG$itersub,"\n")
     cat("normRp=", normRp, "\n")
     cat("primfeas=", primfeas, "\n")
     cat("primfeasorg=", primfeasorg, "\n")
