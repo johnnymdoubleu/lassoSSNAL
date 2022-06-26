@@ -1,6 +1,6 @@
 simplified_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) {
   
-  printsub <- 1
+  printsub <- 0
   breakyes <- 0
   maxitersub <- 50
   tiny <- 1e-10
@@ -81,11 +81,11 @@ simplified_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) {
     runhist$Ly[itersub] <- Ly
     
     if (printsub){
-      cat("iteration for subproblem:", itersub, "\n")
-      cat("Ly:", Ly, "\n")
-      cat("priminf_sub:", priminf_sub, "\n")
-      cat("dualinf_sub:", dualinf_sub, "\n")
-      cat("par.tolconst:", par$tolconst, "\n")
+      # cat("iteration for subproblem:", itersub, "\n")
+      # cat("Ly:", Ly, "\n")
+      # cat("priminf_sub:", priminf_sub, "\n")
+      # cat("dualinf_sub:", dualinf_sub, "\n")
+      # cat("par.tolconst:", par$tolconst, "\n")
     }
     #if (printsub)
     #  fprintf('\n      %2.0d  %- 11.10e %3.2e %3.2e %3.2e',...
@@ -184,7 +184,7 @@ simplified_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) {
     }
     
     if (printsub) {
-      cat("tolerance:", par$tolerance, "\n")
+      cat("tolerance:", par$tol, "\n")
       cat("resnrm:", tail(resnrm, n=1), "\n")
       cat("PSQMR iteration no.:", iterpsqmr, "\n")
     }
@@ -224,6 +224,13 @@ simplified_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) {
       Ly_ratio <- (Ly - runhist$Ly[itersub - 1]) / (abs(Ly) + eps)
     }
     
+    if (printsub){
+      cat("alp:", alp, "\n")
+      cat("iterstep:", iterstep, "\n")
+      if (Ly_ratio < 0){
+        cat("-----------------------------", "\n")
+      }
+    }
     #if (printsub)
     #  fprintf(' %3.2e %2.0f',alp,iterstep);
     #if (Ly_ratio < 0); fprintf('-'); end
@@ -302,6 +309,10 @@ simplified_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) {
         # msigAytmp = -sig*A %*% ytmp
         msigAytmp <- eigenMapMatMult(-sig*A, ytmp, 4)
         cnt_Amap <- cnt_Amap + 1
+        if (printsub){
+          dualfeasorg <- norm(Rdz/options$dscale, "2")*cscale/(1+norm(y/options$dscale, "2")*cscale)
+          cat("dualfeasorg:", dualfeasorg, "\n")
+        }
         #%normRd = norm(Rdz);
         #if printsub
         #if Ascaleyes

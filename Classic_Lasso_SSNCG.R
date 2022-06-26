@@ -1,6 +1,5 @@
 Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) {
-  
-  printsub <- 1
+  printsub <- TRUE
   breakyes <- 0
   maxitersub <- 50
   tiny <- 1e-10
@@ -83,26 +82,32 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     runhist$Ly[itersub] <- Ly
 
     if (printsub){
-      cat("iteration No. for subproblem:", itersub, "\n")
-      cat("Ly:", Ly, "\n")
-      cat("priminf_sub:", priminf_sub, "\n")
-      cat("dualinf_sub:", dualinf_sub, "\n")
-      cat("Tolerance Constant:", par$tolconst, "\n")
+      subprob.stats <- list(
+        phase2iter = itersub,
+        Ly = Ly,
+        priminf_sub = priminf_sub,
+        dualinf_sub = dualinf_sub,
+        tolconst = par$tolconst
+      )
+      subprob.comb <- do.call(cbind, subprob.stats)
     }
     
     if (max(normGradLxi) < max(tolsub) && itersub > 1) {
       if (printsub) {
-        cat("----------------------------", "\n")
         cat("good termination in subproblem:", "\n")
-        cat("dualinf in subproblem:", dualinf_sub, "\n")
-        cat("tolsub:", tolsub, "\n")
-        cat("normGradLxi:", normGradLxi, "\n")
+        final.stats <- list(
+          dualinfeas = dualinf_sub,
+          gradLxi = normGradLxi,
+          tolsub = tolsub
+        )
+        print(do.call(cbind, final.stats))
+        cat("---------------------------------------------", "\n")
       }
       breakyes <- -1
       break
     }
-    #%% Compute Newton direction
-    #%% precond = 0, 
+    # Computing Newton direction
+    # setting precondition numbers, precond = 0
     
     par$epsilon <- min(1e-3, 0.1 * normGradLxi) #%% good to add
     par$precond <- precond
@@ -132,12 +137,6 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     }
     
     rhs <- GradLxi
-    
-    #if (Ascaleyes == 1 && false
-    #tolpsqmr = min(5e-3, 0.1*norm(rhs));
-    #else
-    #end
-    
     tolpsqmr <- min(5e-3, 0.1*norm(rhs,"2"))
     
     const2 <- 1
@@ -146,8 +145,8 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       const2 <- 0.5 * const2
     }
     
-    print(dualinf_sub)
-    print(runhist$dualinf[itersub - 1])
+    # print(dualinf_sub)
+    # print(runhist$dualinf[itersub - 1])
     if (dual_ratio > 1.1){
       const2 <- 0.5 * const2
     }
@@ -177,12 +176,18 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     }
     
     if (printsub) {
-      cat("tolerance:", par$tolerance, "\n")
-      cat("resnrm:", tail(resnrm, n=1), "\n")
-      cat("PSQMR iteration no.:", iterpsqmr, "\n")
+      psqmr.stats <- list(
+        tol = par$tol,
+        resnrm = tail(resnrm, n=1),
+        psqmr.iter = iterpsqmr,
+        const2 = const2,
+        rankX = sum(1-par$rr)
+      )
+      # psqmr.comb <- do.call(cbind, psqmr.stats)
+      # midcomb <- cbind(subprob.comb,psqmr.comb)
     }
     
-    par$iter <- itersub;
+    par$iter <- itersub
     if ((itersub <= 3) & (dualinf_sub > 1e-4) | (par$iter <3)) {
       stepop <- 1
     } else {
@@ -213,13 +218,18 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       Ly_ratio <- (Ly - runhist$Ly[itersub - 1]) / (abs(Ly) + eps)
     }
     
-    #if (printsub)
-    #  fprintf(' %3.2e %2.0f',alp,iterstep);
-    #if (Ly_ratio < 0); fprintf('-'); end
-    #end
+    if (printsub){
+      psqmr.stats <- c(psqmr.stats, alpha=alp, iterstep=iterstep)
+      psqmr.comb <- do.call(cbind, psqmr.stats)
+      print(cbind(subprob.comb,psqmr.comb))
+      cat("\n")
+      if (Ly_ratio < 0){
+        # cat("-", "\n")
+      }
+    }
     
-    ### CHECK FOR STAGNATION LINE 161 GitHub code
-    #%% check for stagnation
+    # CHECK FOR STAGNATION LINE 161 GitHub code
+    # check for stagnation
     if (itersub > 4) {
       idx <- seq(max(1, itersub - 3) : itersub)
       tmp <- runhist$priminf[idx]
@@ -291,14 +301,11 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
         # msigAytmp = -sig*A %*% ytmp
         msigAytmp <- eigenMapMatMult(-sig*A, ytmp, 4)
         cnt_Amap <- cnt_Amap + 1
-        #%normRd = norm(Rdz);
-        #if printsub
-        #if Ascaleyes
-        #fprintf('\n new dualfeasorg = %3.2e', norm(Rdz./options.dscale)*cscale/(1+norm(y./options.dscale)*cscale));
-        #else
-        #  fprintf('\n new dualfeasorg = %3.2e', norm(Rdz)*cscale/(1+norm(y)*cscale));
-        #end
-        #end
+        
+        if (printsub){
+          dualfeasorg <- norm(Rdz/options$dscale, "2")*cscale/(1+norm(y/options$dscale, "2")*cscale)
+          cat("new dualfeasorg:", dualfeasorg, "\n")
+        }
         break
       }
     }

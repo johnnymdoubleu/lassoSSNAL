@@ -32,7 +32,7 @@ linsyssolve <- function(Ainput, rhs, par){
     solver <- "d_pcg"
   }
   
-  print(solver)
+  print(paste0("We employ '", solver, "' solver"))
   
   if (solver == "d_pcg") {
     if (Ayes){

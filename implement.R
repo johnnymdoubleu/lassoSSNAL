@@ -56,10 +56,10 @@ Rprof()
 clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts)
 Rprof(NULL)
 # summaryRprof()
-print("-------------------------")
-cat("min(X) = ", clo$info$minx, "\n")
-cat("max(X) = ", clo$info$max, "\n")
-cat("nnz = ", findnnz(clo$info$x,0.999)$k, "\n")
+# print("-------------------------")
+# cat("min(X) = ", clo$info$minx, "\n")
+# cat("max(X) = ", clo$info$max, "\n")
+# cat("nnz = ", findnnz(clo$info$x,0.999)$k, "\n")
 
 
 
