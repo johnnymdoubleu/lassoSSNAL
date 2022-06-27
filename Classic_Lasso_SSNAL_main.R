@@ -333,9 +333,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       print(do.call(cbind, main.stats))
       cat("\n")
     }
-    
-
-
+  
     #runhist <- c(runhist, 
     #             primobj[iter] = primobj, 
     #             dualobj[iter] = dualobj,

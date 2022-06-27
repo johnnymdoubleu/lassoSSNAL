@@ -1,4 +1,5 @@
-Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, x=NULL){
+Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, 
+                                y = NULL, xi = NULL, x = NULL){
   maxiter <- 5000
   stoptol <- 1e-6
   printyes <- TRUE
@@ -7,7 +8,7 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   rescale <- 1
   Lip <- 1
   Ascale <- 0
-  Ascaleyes <- 1
+  Ascaleyes <- TRUE
   orgojbconst <- 0
   
   
