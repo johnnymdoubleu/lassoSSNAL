@@ -97,7 +97,7 @@ The algorithm was first developed in **Matlab** and named [Suitelasso](https://g
 
 ### Built With
 
-This package is mainly built in **R** with the aid of **C++**.
+This package is mainly built in **R** with the aid of **C++*.
 * [R](https://www.r-project.org/)
 * [C++](https://docs.microsoft.com/en-us/cpp/cpp/?view=msvc-170)
 
@@ -261,7 +261,7 @@ While constructing this repository and readme file. We have reviewed the sources
    title     = {Semismooth Newton Augmented Lagrangian Method for Solving Lasso Problems with Implementation in R},
    author    = {Lee, MyungWon and Renfrew, Michael},
    year      = {2022},
-   note      = {Undergraduate Honours Thesis},
+   note      = {Undergraduate Honors Thesis},
    school    = {University of Edinburgh},
    address   = {Edinburgh, United Kingdom}
 }

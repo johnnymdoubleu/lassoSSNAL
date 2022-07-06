@@ -28,11 +28,11 @@ linsyssolve <- function(Ainput, rhs, par){
   if (sp <= 0.7*m & Ayes & sp <= dn){
     solver <- "p_direct"
   }
-  if ((m>5e3 & sp >= 200)| (m>2000 & sp > 800) | (m > 100 & sp > 1e4)){
+  if ((m>5e3 & sp >= 200)| (m > 2000 & sp > 800) | (m > 100 & sp > 1e4)){
     solver <- "d_pcg"
   }
   
-  print(solver)
+  # print(paste0("We employ '", solver, "' solver"))
   
   if (solver == "d_pcg") {
     if (Ayes){
@@ -54,7 +54,7 @@ linsyssolve <- function(Ainput, rhs, par){
       return(output)
     }
     else {
-      c(xi,psq, resnrm, solve_ok) <- psqmry('matvec_classicLasso_Amap',Ainput, rhs, par)
+      c(xi, psq, resnrm, solve_ok) <- psqmry('matvec_classicLasso_Amap',Ainput, rhs, par)
     }
   }
   else if(solver == "d_direct"){
@@ -77,9 +77,6 @@ linsyssolve <- function(Ainput, rhs, par){
   else if(solver == "p_direct"){
     #AP <- Ainput$A[,pp]
     AP <- Ainput[,pp]
-    #print(dim(A))
-    #print(pp)
-    #print(par$rr)
     #AP <- A[,(pp+1)]
     APT <- t(AP)
     # rhstmp <- APT %*% rhs

@@ -1,14 +1,16 @@
-Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, x=NULL){
+Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, 
+                                y = NULL, xi = NULL, x = NULL){
   maxiter <- 5000
   stoptol <- 1e-6
-  printyes <- 1
+  printyes <- TRUE
   scale <- 0
-  dscale <- matrix(1,n,1)
+  dscale <- matrix(1, n, 1)
   rescale <- 1
   Lip <- 1
   Ascale <- 0
-  Ascaleyes <- 0
+  Ascaleyes <- TRUE
   orgojbconst <- 0
+  eps <- 2.220446e-16 # Copy the MATLAB eps essentially 
   
   
   #replace the assigned values if the values in options were defined
@@ -46,15 +48,19 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
     }
     
     #A <- A %*% diag(dscale,n,n)
-    A <- as.matrix(A%*%Diagonal(x=dscale))
+    A <- as.matrix(A %*% Diagonal(x = dscale))
     Ascaleyes <- 1
     #print out the time taken
   }
 
-  if(is.null(x) | is.null(xi) | is.null(y)){
-    x <- matrix(0,n,1)
-    xi <- matrix(0,m,1)
-    y <- x
+  if(is.null(xi)|is.null(y)){
+    xi <- matrix(0, m, 1)
+    y <- matrix(0, n, 1)
+  }
+  
+  cat("is x null:", is.null(x), "sum of x is:", sum(x),"\n")
+  if(is.null(x)){
+    x <- matrix(0, n, 1)
   }
   
   
@@ -135,8 +141,8 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   
   info <- list(m = m,
                n = n,
-               minx = min(min(x)),
-               max = max(max(x)),
+               min.x = min(min(x)),
+               max.x = max(max(x)),
                relgap = relgap,
                iter = iter,
    #            totaltime = ttime,
@@ -151,6 +157,23 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
     #           nnz = findnnz(x, 0.999),
                x = x
   )
+  if (printyes){
+    ssnal.stats <- list(
+      msg = msg,
+      total.iter = info$iter,
+      primobj = primobj,
+      dualobj = dualobj,
+      relgap = info$relgap,
+      primfeasorg = primfeasorg,
+      dualfeasorg = dualfeasorg,
+      eta = info$eta,
+      etaorg = info$etaorg,
+      min.x = info$min.x,
+      max.x = info$max.x,
+      nnz = findnnz(info$x, 0.999)$k
+    )
+    print(do.call(rbind, ssnal.stats))
+  }
   #if (printyes){
   #  if (is.null(msg)){
   #    printf('\n %d', msg)
@@ -165,7 +188,6 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, y=NULL, xi=NULL, 
   #  printf('\n  Amap cnt = %3d, ATmap cnt = %3d, partial AATmap cnt = %3d, full AATmap cnt = %3d', info$cnt_Amap, info$cnt_ATmap, info$cnt_pAATmap, info$cnt_fAATmap)
   #  printf('\n  number of nonzeros in x (0.999) = %3.0d',findnnz(x,0.999))
   #}
-  
   
   output <- list(obj = obj,
                  y = y,

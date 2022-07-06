@@ -11,8 +11,9 @@
 #               iter = iter)
 #return(output)
 
-findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
-                     dxi,Atdxi,tol,options) {
+findstep <- function(par, b, ld, Ly0, xi0, Atxi0, y0, ytmp0,
+                     dxi, Atdxi, tol, options) {
+  eps <- 2.220446e-16 # Copy the MATLAB eps essentially 
   if("stepop" %in% names(options)) {
     stepop = options$stepop
   }
@@ -24,7 +25,7 @@ findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
   #%%
   
   tmp1 = t(dxi) %*% (b-xi0)
-  tmp2 = norm(dxi,"2")^2 
+  tmp2 = norm(dxi, "2")^2 
   g0  = tmp1 + sig * t(Atdxi) %*% ytmp0
   #Ly = []; 
   
@@ -52,18 +53,18 @@ findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
     return(output)
   }
   
-  alp = 1 
-  alpconst = 0.5
+  alp<- 1 
+  alpconst <- 0.5
   for (iter in seq(1,maxit)) {
     if (iter==1) {          
-      alp = 1
-      LB = 0
-      UB = 1
+      alp <- 1
+      LB <- 0
+      UB <- 1
     } else {
-      alp = alpconst*(LB+UB)
+      alp <- alpconst * (LB + UB)
     }
-    xi = xi0 + alp*dxi
-    yinput = ytmp0 + y0 - alp*Atdxi
+    xi <- xi0 + alp * dxi
+    yinput <- ytmp0 + y0 - alp*Atdxi
     
     ## DEAL WITH THIS!
     
@@ -73,7 +74,7 @@ findstep <- function(par,b,ld,Ly0,xi0,Atxi0,y0,ytmp0,
     pi_out <- proj_inf(yinput,ld)
     
     # PROJ_INF IS IN 'solvers' FOLDER!
-    par$rr = pi_out$rr
+    par$rr <- pi_out$rr
     y = pi_out$y
     
     ytmp = yinput - y;
