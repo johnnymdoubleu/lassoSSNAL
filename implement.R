@@ -6,26 +6,26 @@ library(Matrix)
 library(glmnet)
 library(tidyverse)
 
-source("lassoSSNAL/Classic_Lasso_SSNAL.R")
-source("lassoSSNAL/Classic_Lasso_SSNAL_main.R")
-source("lassoSSNAL/Classic_Lasso_SSNCG.R")
-source("lassoSSNAL/proj_inf.R")
-source("lassoSSNAL/linsyssolve.R")
-source("lassoSSNAL/findstep.R")
-source("lassoSSNAL/psqmry.R")
-source("lassoSSNAL/matvec_ClassicLasso.R")
-source("lassoSSNAL/findnnz.R")
-sourceCpp("lassoSSNAL/mex_matrix_mult.cpp")
-sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
+source("folder/Classic_Lasso_SSNAL.R")
+source("folder/Classic_Lasso_SSNAL_main.R")
+source("folder/Classic_Lasso_SSNCG.R")
+source("folder/proj_inf.R")
+source("folder/linsyssolve.R")
+source("folder/findstep.R")
+source("folder/psqmry.R")
+source("folder/matvec_ClassicLasso.R")
+source("folder/findnnz.R")
+sourceCpp("folder/mex_matrix_mult.cpp")
+sourceCpp("folder/mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 
 # data <- read.mat("UCIdata/abalone_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/space_ga_scale_expanded9.mat")   #lassoSSNAL
-data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")    #lassoSSNAL
+# data <- read.mat("UCIdata/bodyfat_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/pyrim_scale_expanded5.mat")      #lassoSSNAL
 # data <- read.mat("UCIdata/housing_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("UCIdata/triazines_scale_expanded4.mat")  #lassoSSNAL
-# data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #lassoSSNAL
+data <- read.mat("UCIdata/mpg_scale_expanded7.mat")        #lassoSSNAL
 
 lipfun <- function(b, A){
   return(t(t(A%*%b) %*% A))
@@ -34,7 +34,7 @@ lipfun <- function(b, A){
 A <- data$A
 b <- data$b
 
-eps <- 2.220446e-16 # Copy the MATLAB eps essentially 
+ # Copy the MATLAB eps essentially 
 n <- ncol(A)
 c <- 10^(-3)                          # THIS IS Lambda_c
 #c <- 3.727594e-03
@@ -55,11 +55,11 @@ opts$Ascale <- 1
 Rprof()
 clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts)
 Rprof(NULL)
-summaryRprof()
-print("-------------------------")
-cat("min(X) = ", clo$info$minx, "\n")
-cat("max(X) = ", clo$info$max, "\n")
-cat("nnz = ", findnnz(clo$info$x,0.999)$k, "\n")
+# summaryRprof()
+# print("-------------------------")
+# cat("min(X) = ", clo$info$minx, "\n")
+# cat("max(X) = ", clo$info$max, "\n")
+# cat("nnz = ", findnnz(clo$info$x,0.999)$k, "\n")
 
 
 

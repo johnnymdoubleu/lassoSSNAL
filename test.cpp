@@ -41,11 +41,3 @@ SEXP eigenTransMapMatMult(const Eigen::Map<Eigen::MatrixXd> A,
   Eigen::MatrixXd C = A.transpose() * A;
   return Rcpp::wrap(C);
 }
-
-// [[Rcpp::export]]
-SEXP eigenMult(const Eigen::Map<Eigen::MatrixXd> A){
-  
-  Eigen::setNbThreads(4);
-  Eigen::MatrixXd C = A.transpose() * A;
-  return Rcpp::wrap(C);
-}
