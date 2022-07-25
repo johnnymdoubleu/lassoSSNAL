@@ -53,11 +53,10 @@ ssnal <- function(A, b, lambda = c(0, -5), stoptol = 1e-6, printyes=TRUE,
     maxiter = maxiter,
     printyes = printyes
   )
-  
+  x0 <- NULL
   if (warmstart) {
     output.list <- matrix(nrow=9, ncol=10)
     grid <- 10^seq(lambda[1], lambda[2], length = 10)
-    x0 <- NULL
     for(i in grid) {
       cat("SSNAL with lambda:", i, "\n")
       rho <- i * maxA
@@ -85,13 +84,17 @@ ssnal <- function(A, b, lambda = c(0, -5), stoptol = 1e-6, printyes=TRUE,
     options(scipen = 10)
     print(output.list)
     options(scipen = 0)
-    minlambda <- grid[which(output.list[4,]==min(output.list[4,]))]
+    minlambda <- grid[which(output.list[4,]== min(output.list[4,]))]
     cat("Lowest Objective Value = ", min(output.list[4,]), "\n", 
         "lambda value = ", minlambda, "\n")
     cat("-----------------------------------------", "\n")
     cat("Starting with an optimised lambda value")
     # clo <- Classic_Lasso_SSNAL(A, b, n, (minlambda * maxA), opts, x = x0)
     # return(output.list)
+    result <- list(
+      output = output.list,
+      minlambda = minlambda
+    )
   }
   else{
     # Rprof()

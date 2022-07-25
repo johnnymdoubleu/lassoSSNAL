@@ -58,10 +58,14 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options,
     y <- matrix(0, n, 1)
   }
   
-  cat("is x null:", is.null(x), "sum of x is:", sum(x),"\n")
+  
   if(is.null(x)){
     x <- matrix(0, n, 1)
   }
+  else{
+    cat("is x not null:", is.null(x), "sum of x is:", sum(x),"\n")
+  }
+  
   
   
   parmain <- list(dscale = dscale,
@@ -141,8 +145,8 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options,
   
   info <- list(m = m,
                n = n,
-               min.x = min(min(x)),
-               max.x = max(max(x)),
+               min.x = min(x),
+               max.x = max(x),
                relgap = relgap,
                iter = iter,
    #            totaltime = ttime,
@@ -157,6 +161,7 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options,
     #           nnz = findnnz(x, 0.999),
                x = x
   )
+  
   if (printyes){
     ssnal.stats <- list(
       msg = msg,

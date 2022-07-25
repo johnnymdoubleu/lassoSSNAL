@@ -17,7 +17,7 @@ findstep <- function(par, b, ld, Ly0, xi0, Atxi0, y0, ytmp0,
   if("stepop" %in% names(options)) {
     stepop = options$stepop
   }
-  printlevel=0
+  printlevel = 0
   maxit = ceil(log(1/(tol+eps))/log(2))
   c1 = 1e-4
   c2 = 0.9
@@ -53,10 +53,10 @@ findstep <- function(par, b, ld, Ly0, xi0, Atxi0, y0, ytmp0,
     return(output)
   }
   
-  alp<- 1 
+  alp <- 1 
   alpconst <- 0.5
   for (iter in seq(1,maxit)) {
-    if (iter==1) {          
+    if (iter == 1) {          
       alp <- 1
       LB <- 0
       UB <- 1
@@ -75,17 +75,17 @@ findstep <- function(par, b, ld, Ly0, xi0, Atxi0, y0, ytmp0,
     
     # PROJ_INF IS IN 'solvers' FOLDER!
     par$rr <- pi_out$rr
-    y = pi_out$y
+    y <- pi_out$y
     
-    ytmp = yinput - y;
-    galp = tmp1 - alp*tmp2 + sig*t(Atdxi) %*% ytmp;
+    ytmp <- yinput - y
+    galp <- tmp1 - alp*tmp2 + sig*t(Atdxi) %*% ytmp;
     if (iter==1) {
-      gLB = g0
-      gUB = galp
+      gLB <- g0
+      gUB <- galp
       if (sign(gLB)*sign(gUB) > 0) {
         #if (printlevel); fprintf('|'); end
-        Atxi = Atxi0+alp*Atdxi;
-        Ly = t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2;             
+        Atxi <- Atxi0+alp*Atdxi
+        Ly <- t(b) %*% xi - 0.5 * norm(xi, "2")^2 - 0.5 * sig * norm(ytmp, "2")^2             
         
         ## DEAL WITH THIS RETURN VALUE LATER
         output <- list(par = par,
@@ -101,7 +101,7 @@ findstep <- function(par, b, ld, Ly0, xi0, Atxi0, y0, ytmp0,
     }
     
     if (abs(galp) < c2*abs(g0)) { 
-      Ly = t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2
+      Ly <- t(b) %*% xi - 0.5*norm(xi,"2")^2 - 0.5*sig*norm(ytmp,"2")^2
       if (Ly-Ly0-c1*alp*g0 > -1e-8/max(1,abs(Ly0))
           && ((stepop==1) || (stepop==2 && 
                               abs(galp)<tol))) {
