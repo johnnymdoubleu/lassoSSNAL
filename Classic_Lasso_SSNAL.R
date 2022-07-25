@@ -85,7 +85,7 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options,
   )
   if("Sigma" %in% names(options)) parmain$Sigma = options$Sigma
   
-  clsmo <- Classic_Lasso_SSNAL_main(A,Ainput,b,lambda,parmain,y,xi,x)
+  clsmo <- Classic_Lasso_SSNAL_main(A, Ainput, b, lambda, parmain, y, xi, x)
   
   obj_main <- clsmo$obj
   y <- clsmo$y

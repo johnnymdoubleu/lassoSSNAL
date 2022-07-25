@@ -71,7 +71,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
   if (Ascaleyes){sigma <- 3}
   if ("sigma" %in% names(parmain)){sigma <- parmain$sigma}
   #return(c(obj1,obj2))
-  Rp1 <- Ax- b
+  Rp1 <- Ax - b
   Rp <- Rp1 + xi
   Rd <- Atxi + y
   primfeas <- norm(Rp, "2") / normb
@@ -146,11 +146,12 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
   normyxi <- max(normx, normAtxi)
   
   for (iter in c(1:maxiter)) {
-    if ((rescale==1 & maxfeas < 5e2 & iter%%3 ==1 & iter > 1)
-        |(is.null(A) & (rescale >= 2 & maxfeas < 1e-1 & 
+    if ((rescale == 1 & maxfeas < 5e2 & iter%%3 == 1 & iter > 1)
+        | (is.null(A) & (rescale >= 2 & maxfeas < 1e-1 & 
                         abs(relgap)<0.05 & iter >= 5 & 
                         max(normx/normyxi, normyxi/normx) > 1.7 & 
-                        iter%%5 ==1))){
+                        iter%%5 == 1)) 
+        | (sum(abs(x)) > 0.001 & iter == 1)){
       normy <- norm(y, "2")
       normAtxi <- norm(Atxi, "2")
       normx <- norm(x, "2")

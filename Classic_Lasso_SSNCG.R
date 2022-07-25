@@ -220,7 +220,7 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
     }
     
     if (printsub){
-      psqmr.stats <- c(psqmr.stats, alpha=alp, iterstep=iterstep)
+      psqmr.stats <- c(psqmr.stats, alpha = alp, iterstep = iterstep)
       psqmr.comb <- do.call(cbind, psqmr.stats)
       print(cbind(subprob.comb,psqmr.comb))
       cat("\n")
