@@ -277,7 +277,6 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
         #if (printsub); fprintf(' $$'); end
         breakyes <- 4
       }
-      
 
       if ((itersub >=10) & (dualinf_sub > 5 * min(runhist$dualinf)) 
           & (priminf_sub > 2 * min(runhist$priminf))) {
@@ -288,13 +287,13 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
       if (itersub >= 20) {
         dualinf_ratioall <- runhist$dualinf[2:itersub] / 
           runhist$dualinf[1:(itersub-1)]
-        idx <- which(dualinf_ratioall > 1) 
+        idx <- which(dualinf_ratioall > 1)
         if (length(idx) >= 3) {
           dualinf_increment <- mean(dualinf_ratioall[idx])
           if (dualinf_increment > 1.25) {
-            breakyes <- 6             
-          }                    
-        }              
+            breakyes <- 6
+          }
+        }
       }
       
       if (breakyes > 0) {
@@ -325,7 +324,6 @@ Classic_Lasso_SSNCG <- function(n, b, A, x0, Ax0, Atxi0, xi0, ld, par, options) 
   info$Ax <- msigAytmp
   info$cnt_pAATmap <- cnt_pAATmap
   info$cnt_fAATmap <- cnt_fAATmap
-  
   
   output <- list(y = y,
                  Atxi = Atxi,
