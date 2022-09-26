@@ -5,9 +5,9 @@ source("lassoSSNAL/ssnal.R", echo = FALSE)
 # data <- read.mat("D:/UCIdata/space_ga_scale_expanded9.mat")   #lassoSSNAL
 # data <- read.mat("D:/UCIdata/bodyfat_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("D:/UCIdata/pyrim_scale_expanded5.mat")      #lassoSSNAL
-data <- read.mat("D:/UCIdata/housing_scale_expanded7.mat")    #lassoSSNAL
+# data <- read.mat("D:/UCIdata/housing_scale_expanded7.mat")    #lassoSSNAL
 # data <- read.mat("D:/UCIdata/triazines_scale_expanded4.mat")  #lassoSSNAL
-# data <- read.mat("D:/UCIdata/mpg_scale_expanded7.mat")        #lassoSSNAL
+data <- read.mat("D:/UCIdata/mpg_scale_expanded7.mat")        #lassoSSNAL
 A <- data$A
 b <- data$b
 

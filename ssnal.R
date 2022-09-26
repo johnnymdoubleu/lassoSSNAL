@@ -63,7 +63,7 @@ ssnal <- function(A, b, lambda = c(0, -5), stoptol = 1e-6, printyes=TRUE,
       cat("SSNAL with lambda:", i, "\n")
       rho <- i * maxA
       Rprof()
-      clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts, x = x0, y=y0, xi=xi0)
+      clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts, x = x0, y = y0, xi = xi0)
       Rprof(NULL)
       x0 <- clo$info$x
       y0 <- clo$info$y
