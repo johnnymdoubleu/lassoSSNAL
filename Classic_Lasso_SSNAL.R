@@ -1,5 +1,5 @@
-Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, 
-                                y = NULL, xi = NULL, x = NULL){
+Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options, x = NULL,
+                                y = NULL, xi = NULL){
   maxiter <- 5000
   stoptol <- 1e-6
   printyes <- TRUE
@@ -53,11 +53,19 @@ Classic_Lasso_SSNAL <- function(Ainput, b, n, lambda, options,
     #print out the time taken
   }
 
-  if(is.null(xi)|is.null(y)){
-    xi <- matrix(0, m, 1)
+  if(is.null(y)){
     y <- matrix(0, n, 1)
   }
+  else{
+    cat("is y not null:", is.null(y), "sum of y is:", sum(y),"\n")
+  }
   
+  if(is.null(xi)){
+    xi <- matrix(0, m, 1)
+  }
+  else{
+    cat("is xi not null:", is.null(xi), "sum of xi is:", sum(xi),"\n")
+  }
   
   if(is.null(x)){
     x <- matrix(0, n, 1)

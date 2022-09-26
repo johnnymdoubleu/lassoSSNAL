@@ -4,17 +4,17 @@ library(Rcpp)
 library(RSpectra)
 library(Matrix)
 
-source("folder/Classic_Lasso_SSNAL.R")
-source("folder/Classic_Lasso_SSNAL_main.R")
-source("folder/Classic_Lasso_SSNCG.R")
-source("folder/proj_inf.R")
-source("folder/linsyssolve.R")
-source("folder/findstep.R")
-source("folder/psqmry.R")
-source("folder/matvec_ClassicLasso.R")
-source("folder/findnnz.R")
-sourceCpp("folder/mex_matrix_mult.cpp")
-sourceCpp("folder/mexsigma_update_classic_Lasso_SSNAL.cpp")
+source("lassoSSNAL/Classic_Lasso_SSNAL.R")
+source("lassoSSNAL/Classic_Lasso_SSNAL_main.R")
+source("lassoSSNAL/Classic_Lasso_SSNCG.R")
+source("lassoSSNAL/proj_inf.R")
+source("lassoSSNAL/linsyssolve.R")
+source("lassoSSNAL/findstep.R")
+source("lassoSSNAL/psqmry.R")
+source("lassoSSNAL/matvec_ClassicLasso.R")
+source("lassoSSNAL/findnnz.R")
+sourceCpp("lassoSSNAL/mex_matrix_mult.cpp")
+sourceCpp("lassoSSNAL/mexsigma_update_classic_Lasso_SSNAL.cpp")
 
 lipfun <- function(b, A){
   return(t(t(A%*%b) %*% A))
@@ -54,16 +54,20 @@ ssnal <- function(A, b, lambda = c(0, -5), stoptol = 1e-6, printyes=TRUE,
     printyes = printyes
   )
   x0 <- NULL
+  y0 <- NULL
+  xi0 <- NULL
   if (warmstart) {
-    output.list <- matrix(nrow=9, ncol=10)
+    output.list <- matrix(nrow = 9, ncol = 10)
     grid <- 10^seq(lambda[1], lambda[2], length = 10)
     for(i in grid) {
       cat("SSNAL with lambda:", i, "\n")
       rho <- i * maxA
       Rprof()
-      clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts, x = x0)
+      clo <- Classic_Lasso_SSNAL(A, b, n, rho, opts, x = x0, y=y0, xi=xi0)
       Rprof(NULL)
       x0 <- clo$info$x
+      y0 <- clo$info$y
+      xi0 <- clo$info$xi
       print("-------------------------")
       warmstart.list <- list(
         lambda = i,
