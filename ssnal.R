@@ -34,7 +34,7 @@ lipfun <- function(b, A){
 #         iteration. The default value is 1000.
 #warmstart : a boolean variable corresponding to perform warmstarting.
 #            The default value is FALSE.
-ssnal <- function(A, b, lambda = c(0, -5), stoptol = 1e-6, printyes=TRUE,
+ssnal <- function(A, b, lambda = c(0, -5), stoptol = 1e-6, printyes = TRUE,
                   maxiter = 1000, warmstart = FALSE){
 
   eps <- 2.220446e-16 # Copy the MATLAB eps essentially 
@@ -88,7 +88,7 @@ ssnal <- function(A, b, lambda = c(0, -5), stoptol = 1e-6, printyes=TRUE,
     options(scipen = 10)
     print(output.list)
     options(scipen = 0)
-    minlambda <- grid[which(output.list[4,]== min(output.list[4,]))]
+    minlambda <- grid[which(output.list[4,]==min(output.list[4,]))]
     cat("Lowest Objective Value = ", min(output.list[4,]), "\n", 
         "lambda value = ", minlambda, "\n")
     cat("-----------------------------------------", "\n")

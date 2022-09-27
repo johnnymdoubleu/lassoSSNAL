@@ -277,7 +277,7 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
       dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + 
                                t(b) %*% xi) + orgojbconst
       # dualobj <- objscale * (-0.5 * norm(xi,"2")^2 + eigenMapMatMult(t(b),xi,4)) + orgojbconst
-      relgap <- (primobj - dualobj) / (1+ abs(primobj) + abs(dualobj))
+      relgap <- (primobj - dualobj) / (1 + abs(primobj) + abs(dualobj))
       # ttime <- measure time
       cat("---------------------------------------------", "\n")
       main.stats <- list(
@@ -322,10 +322,10 @@ Classic_Lasso_SSNAL_main <- function(A, orig_A, b, lambda, parmain, y, xi, x){
         else {
           # etaorg <- norm(grad + projinf(x %*% bscale - grad, lambdaorg, "2"))
           # eta <- etaorg / (1 + norm(grad, "2") + norm(x %*% bscale, "2"))
-          etaorg <- norm(grad + projinf(eigenMapMatMult(x, bscale,4) - 
+          etaorg <- norm(grad + projinf(eigenMapMatMult(x, bscale, 4) - 
                                           grad, lambdaorg, "2"))
           eta <- etaorg / (1 + norm(grad, "2") + 
-                             norm(eigenMapMatMult(x, bscale,4), "2"))
+                             norm(eigenMapMatMult(x, bscale, 4), "2"))
           main.stats <- c(main.stats, eta = eta, etaorg = etaorg)
         }
         if (eta < stoptol) {
